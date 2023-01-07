@@ -1,0 +1,55 @@
+
+### Dependencies :
+
+List of all libraries might use in the project.
+
+- androidx.appcompat:appcompat
+- androidx.activity:activity-compose
+- androidx.compose.material3:material3
+- androidx.compose.material:material
+- androidx.constraintlayout:constraintlayout-compose
+- org.jetbrains.kotlinx:kotlinx-coroutines-android
+- org.jetbrains.kotlinx:kotlinx-coroutines-core
+- com.google.dagger:hilt-android
+- io.coil-kt:coil-compose
+- org.jetbrains.kotlinx:kotlinx-serialization-json
+- io.mockk:mockk-agent-jvm
+- io.mockk:mockk-android
+- io.mockk:mockk-agent-jvm
+- io.mockk:mockk
+- org.jetbrains.kotlinx:kotlinx-coroutines-test
+- io.kotest:kotest-runner-junit5-jvm
+- org.jetbrains.kotlin:kotlin-reflect
+- app.cash.turbine:turbine
+- io.kotest:kotest-assertions-core-jvm
+- com.google.dagger:hilt-android-compiler
+- com.google.dagger:hilt-android-compiler
+- com.google.dagger:hilt-android-testing
+- com.google.dagger:hilt-android-testing
+- androidx.lifecycle:lifecycle-viewmodel-ktx
+- androidx.lifecycle:lifecycle-runtime-ktx
+- androidx.compose.ui:ui
+- androidx.paging:paging-compose
+- androidx.compose.foundation:foundation
+- androidx.navigation:navigation-compose
+- androidx.hilt:hilt-navigation-compose
+- androidx.compose.foundation:foundation-layout
+- com.squareup.retrofit2:retrofit
+- com.squareup.okhttp3:okhttp
+- com.squareup.okhttp3:logging-interceptor
+- com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter
+- org.orbit-mvi:orbit-viewmodel
+- org.orbit-mvi:orbit-compose
+- org.orbit-mvi:orbit-test
+- com.jakewharton.timber:timber
+- androidx.test:runner
+- org.junit.jupiter:junit-jupiter-api
+- org.jetbrains.kotlin:kotlin-test-junit5
+- androidx.test:rules
+- androidx.test.ext:junit
+- androidx.room:room-runtime
+- androidx.room:room-paging
+- androidx.room:room-compiler
+- androidx.room:room-ktx
+- androidx.compose.ui:ui-test-junit4
+- androidx.compose.ui:ui-test-manifest

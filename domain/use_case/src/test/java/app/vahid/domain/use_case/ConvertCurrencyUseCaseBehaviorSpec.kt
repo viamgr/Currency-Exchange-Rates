@@ -25,12 +25,12 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
 
     init {
 
-        Given("A ConvertCurrencyUseCase instance") {
+        Given("A GetCurrencyRatioUseCase instance") {
 
             val originCurrencyToBaseCurrencyExchangedAmount = mockk<Double>(relaxed = true)
             val baseCurrencyToDestinationCurrencyExchangedAmount = mockk<Double>(relaxed = true)
 
-            val convertCurrencyUseCase = ConvertCurrencyUseCase(
+            val convertCurrencyUseCase = GetCurrencyRatioUseCase(
                 exchangeCalculatorUseCase = exchangeCalculatorUseCase,
                 getTransactionRatesUseCase = getTransactionRatesUseCase
             )
@@ -51,8 +51,8 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
                     amount = originCurrencyToBaseCurrencyExchangedAmount,
                     exchangedAmount = baseCurrencyToDestinationCurrencyExchangedAmount)
 
-            val actualRequest: ConvertCurrencyUseCase.PurchaseRequest =
-                ConvertCurrencyUseCase.PurchaseRequest(
+            val actualRequest: GetCurrencyRatioUseCase.Request =
+                GetCurrencyRatioUseCase.Request(
                     originCurrency = originCurrencyId,
                     destinationCurrency = destinationCurrencyId,
                     amount = inputAmount

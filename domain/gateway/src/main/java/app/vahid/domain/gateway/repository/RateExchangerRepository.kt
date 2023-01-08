@@ -27,4 +27,10 @@ interface RateExchangerRepository {
         baseCurrencyId: String,
     ): Flow<WrappedResult<Boolean>>
 
+    fun addPurchase(
+        originCurrency: String,
+        destinationCurrency: String,
+        amount: Double,
+    ): WrappedResult<Unit>
+
 }

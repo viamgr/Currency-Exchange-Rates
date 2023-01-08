@@ -7,9 +7,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface RateExchangerRepository {
 
-    fun getCurrencyRate(): Flow<List<CurrencyRate>>
+    fun getBaseCurrency(): Flow<String>
 
-    fun getBalances(): Flow<List<Balance>>
+    fun getCurrencyRateList(): Flow<List<CurrencyRate>>
+
+    fun getCurrencyRate(currencyId: String): Flow<Double>
+
+    fun getMyBalanceList(): Flow<List<Balance>>
 
     fun purchaseCurrency(
         amount: Double,

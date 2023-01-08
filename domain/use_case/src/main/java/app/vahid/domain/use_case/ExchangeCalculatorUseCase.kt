@@ -6,12 +6,12 @@ import javax.inject.Inject
 class ExchangeCalculatorUseCase @Inject constructor() :
     UseCase<ExchangeCalculatorUseCase.Request, Double>() {
     override fun execute(parameter: Request): Double {
-        return (parameter.toCurrencyRate / parameter.fromCurrencyRate) * parameter.amount
+        return (parameter.destinationCurrencyRate / parameter.originCurrencyRate) * parameter.amount
     }
 
     data class Request(
-        val fromCurrencyRate: Double,
-        val toCurrencyRate: Double,
+        val originCurrencyRate: Double,
+        val destinationCurrencyRate: Double,
         val amount: Double,
     )
 

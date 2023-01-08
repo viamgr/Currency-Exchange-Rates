@@ -14,15 +14,15 @@ class ConvertCurrencyUseCase @Inject constructor(
 
         return getTransactionRatesUseCase(
             GetTransactionRatesUseCase.Request(
-                fromCurrencyId = parameter.fromCurrency,
-                parameter.toCurrency)
+                originCurrencyId = parameter.originCurrency,
+                destinationCurrencyId = parameter.destinationCurrency)
         )
             .map { response ->
                 val baseCurrencyAmount =
                     exchangeCalculatorUseCase(
                         ExchangeCalculatorUseCase.Request(
-                            fromCurrencyRate = response.baseCurrencyRate,
-                            toCurrencyRate = response.fromCurrencyRate,
+                            originCurrencyRate = response.originCurrencyRate,
+                            destinationCurrencyRate = response.baseCurrencyRate,
                             amount = parameter.amount
                         )
                     )
@@ -30,8 +30,8 @@ class ConvertCurrencyUseCase @Inject constructor(
                 exchangeCalculatorUseCase(
                     ExchangeCalculatorUseCase.Request(
                         amount = baseCurrencyAmount,
-                        toCurrencyRate = response.toCurrencyRate,
-                        fromCurrencyRate = response.fromCurrencyRate
+                        originCurrencyRate = response.baseCurrencyRate,
+                        destinationCurrencyRate = response.destinationCurrencyRate
                     )
                 )
             }
@@ -39,8 +39,8 @@ class ConvertCurrencyUseCase @Inject constructor(
 
 
     data class PurchaseRequest(
-        val fromCurrency: String,
-        val toCurrency: String,
+        val originCurrency: String,
+        val destinationCurrency: String,
         val amount: Double,
     )
 

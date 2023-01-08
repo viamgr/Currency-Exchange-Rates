@@ -1,84 +1,125 @@
 package app.vahid.domain.use_case
 
-import app.vahid.domain.gateway.repository.RateExchangerRepository
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 
-class ConvertCurrencyUseCaseBehaviorSpec() : BehaviorSpec() {
+class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
     override fun isolationMode(): IsolationMode = IsolationMode.InstancePerTest
+
+    private val exchangeCalculatorUseCase: ExchangeCalculatorUseCase = mockk()
+    private val getTransactionRatesUseCase: GetTransactionRatesUseCase = mockk()
+
+    private val originCurrencyRate = 1.0
+    private val destinationCurrencyRate = 1.5
+    private val baseCurrencyRate = 2.0
+    private val originCurrencyId = "EUR"
+    private val destinationCurrencyId = "USD"
+    private val inputAmount = 10.0
 
     init {
 
         Given("A ConvertCurrencyUseCase instance") {
 
-            val exchangeCalculatorUseCase = ExchangeCalculatorUseCase()
-
-            val rateExchangerRepository = mockk<RateExchangerRepository>()
-
-            val getBaseCurrencyRateUseCase = GetBaseCurrencyRateUseCase(
-                rateExchangerRepository = rateExchangerRepository)
-
-            val getTransactionRatesUseCase = GetTransactionRatesUseCase(
-                rateExchangerRepository = rateExchangerRepository,
-                getBaseCurrencyRateUseCase = getBaseCurrencyRateUseCase
-            )
+            val originCurrencyToBaseCurrencyExchangedAmount = mockk<Double>(relaxed = true)
+            val baseCurrencyToDestinationCurrencyExchangedAmount = mockk<Double>(relaxed = true)
 
             val convertCurrencyUseCase = ConvertCurrencyUseCase(
                 exchangeCalculatorUseCase = exchangeCalculatorUseCase,
                 getTransactionRatesUseCase = getTransactionRatesUseCase
             )
 
-            When("The baseCurrency is EUR") {
+            val getTransactionRatesUseCaseRequest = getTransactionRatesUseCaseFakeResponse()
 
-                var request: ConvertCurrencyUseCase.PurchaseRequest =
-                    ConvertCurrencyUseCase.PurchaseRequest("", "", 0.0)
+            val exchangeCalculatorUseCaseRequestOriginCurrencyToBaseCurrency =
+                fakeCalculatorResponse(
+                    originCurrencyRate = originCurrencyRate,
+                    destinationCurrencyRate = baseCurrencyRate,
+                    amount = inputAmount,
+                    exchangedAmount = originCurrencyToBaseCurrencyExchangedAmount)
 
-                every { rateExchangerRepository.getBaseCurrency() } returns flowOf("EUR")
+            val exchangeCalculatorUseCaseRequestBaseCurrencyToDestinationCurrency =
+                fakeCalculatorResponse(
+                    originCurrencyRate = baseCurrencyRate,
+                    destinationCurrencyRate = destinationCurrencyRate,
+                    amount = originCurrencyToBaseCurrencyExchangedAmount,
+                    exchangedAmount = baseCurrencyToDestinationCurrencyExchangedAmount)
 
-                And("FromCurrency is EUR too") {
+            val actualRequest: ConvertCurrencyUseCase.PurchaseRequest =
+                ConvertCurrencyUseCase.PurchaseRequest(
+                    originCurrency = originCurrencyId,
+                    destinationCurrency = destinationCurrencyId,
+                    amount = inputAmount
+                )
 
-                    every { rateExchangerRepository.getCurrencyRate("EUR") } returns flowOf(
-                        1.0).also {
-                        request = request.copy(fromCurrency = "EUR")
+            And("convert currency $actualRequest") {
+
+                val actualResponse = convertCurrencyUseCase(actualRequest).first()
+
+                Then("verify getTransactionRatesUseCase call $actualRequest") {
+                    verify(exactly = 1) {
+                        getTransactionRatesUseCase.invoke(getTransactionRatesUseCaseRequest)
                     }
-
-                    And("toCurrency is USD") {
-
-                        every { rateExchangerRepository.getCurrencyRate("USD") } returns flowOf(
-                            1.129031).also {
-                            request = request.copy(toCurrency = "USD")
-                        }
-
-                        And("amount is 1.0 EUR") {
-                            request = request.copy(amount = 1.0)
-
-                            val result = convertCurrencyUseCase(request).first()
-                            Then("exchanged value should be 1.129031 USD") {
-                                result shouldBe 1.129031
-                            }
-                        }
-                        And("amount is 2 EUR") {
-                            request = request.copy(amount = 2.258062)
-
-                            val result = convertCurrencyUseCase(request).first()
-                            Then("exchanged value should be 2.258062 USD") {
-                                result shouldBe 2.5494219979219994
-                            }
-                        }
-
-                    }
-
                 }
 
+                Then("verify exchangeCalculatorUseCase sequence call $actualRequest") {
+                    coVerifySequence {
+                        exchangeCalculatorUseCase.invoke(
+                            exchangeCalculatorUseCaseRequestOriginCurrencyToBaseCurrency)
+                        exchangeCalculatorUseCase.invoke(
+                            exchangeCalculatorUseCaseRequestBaseCurrencyToDestinationCurrency)
+                    }
+                }
+
+                Then("exchanged value should be as intended $actualRequest") {
+                    actualResponse shouldBe baseCurrencyToDestinationCurrencyExchangedAmount
+                }
 
             }
-
-
         }
     }
+
+
+    private fun getTransactionRatesUseCaseFakeResponse(): GetTransactionRatesUseCase.Request {
+        val getTransactionRatesUseCaseResponse = GetTransactionRatesUseCase.Response(
+            originCurrencyRate = originCurrencyRate,
+            destinationCurrencyRate = destinationCurrencyRate,
+            baseCurrencyRate = baseCurrencyRate
+        )
+
+        return GetTransactionRatesUseCase.Request(
+            originCurrencyId = originCurrencyId,
+            destinationCurrencyId = destinationCurrencyId
+        ).also {
+            every {
+                getTransactionRatesUseCase.invoke(it)
+            } returns flowOf(getTransactionRatesUseCaseResponse)
+        }
+    }
+
+    private fun fakeCalculatorResponse(
+        originCurrencyRate: Double,
+        destinationCurrencyRate: Double,
+        amount: Double,
+        exchangedAmount: Double,
+    ): ExchangeCalculatorUseCase.Request {
+        return ExchangeCalculatorUseCase.Request(
+            originCurrencyRate = originCurrencyRate,
+            destinationCurrencyRate = destinationCurrencyRate,
+            amount = amount
+        )
+            .also {
+                every {
+                    exchangeCalculatorUseCase.invoke(it)
+                } returns exchangedAmount
+            }
+
+    }
+
 }

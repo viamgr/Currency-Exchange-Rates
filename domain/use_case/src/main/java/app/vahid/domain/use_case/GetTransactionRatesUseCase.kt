@@ -17,11 +17,11 @@ class GetTransactionRatesUseCase @Inject constructor(
         return getBaseCurrencyRateUseCase(Unit)
             .flatMapConcat { baseCurrencyRate: Double ->
                 combine(
-                    rateExchangerRepository.getCurrencyRate(parameter.fromCurrencyId),
-                    rateExchangerRepository.getCurrencyRate(parameter.toCurrencyId)
-                ) { fromCurrencyRate: Double, toCurrencyRate: Double ->
-                    Response(fromCurrencyRate = fromCurrencyRate,
-                        toCurrencyRate = toCurrencyRate,
+                    rateExchangerRepository.getCurrencyRate(parameter.originCurrencyId),
+                    rateExchangerRepository.getCurrencyRate(parameter.destinationCurrencyId)
+                ) { originCurrencyRate: Double, destinationCurrencyRate: Double ->
+                    Response(originCurrencyRate = originCurrencyRate,
+                        destinationCurrencyRate = destinationCurrencyRate,
                         baseCurrencyRate = baseCurrencyRate)
                 }
             }
@@ -29,13 +29,13 @@ class GetTransactionRatesUseCase @Inject constructor(
 
 
     data class Request(
-        val fromCurrencyId: String,
-        val toCurrencyId: String,
+        val originCurrencyId: String,
+        val destinationCurrencyId: String,
     )
 
     data class Response(
-        val fromCurrencyRate: Double,
-        val toCurrencyRate: Double,
+        val originCurrencyRate: Double,
+        val destinationCurrencyRate: Double,
         val baseCurrencyRate: Double,
     )
 

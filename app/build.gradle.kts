@@ -2,6 +2,7 @@ import app.vahid.gradle.base.androidTestImplementation
 import app.vahid.gradle.base.configureBuildTypes
 import app.vahid.gradle.base.configurePackagingOptions
 import app.vahid.gradle.base.implementation
+import app.vahid.gradle.base.kapt
 import app.vahid.gradle.base.testImplementation
 
 plugins {
@@ -78,13 +79,15 @@ dependencies {
     androidTestImplementation(
         Libraries.Test.hiltAndroidTest,
         Libraries.Test.junitTest,
-        Libraries.Common.hiltCompiler
+        Libraries.Test.testRunner,
+        Libraries.Test.kotlinReflect,
     )
+    kaptAndroidTest(Libraries.Common.hiltCompiler)
+    kapt(Libraries.Common.hiltCompiler)
 
     implementation(
         Libraries.Ui.appcompat,
         Libraries.Ui.composeActivity,
         Libraries.Common.hiltAndroid,
-        Libraries.Common.hiltCompiler,
     )
 }

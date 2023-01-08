@@ -38,7 +38,7 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
         return currencyExchangeRemoteDataSource.getCurrencyRateList()
             .map { currencyRates ->
                 currencyExchangeLocalDataSource.addCurrencyRateList(
-                    currencyRates
+                    currencyRates.rates
                 )
             }
     }

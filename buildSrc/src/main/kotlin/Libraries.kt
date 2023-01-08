@@ -16,6 +16,7 @@ object Libraries {
         const val mockkJvm = "io.mockk:mockk-agent-jvm:$mockkVersion"
         const val mockk = "io.mockk:mockk:$mockkVersion"
         const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+        const val junitJupiter = "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 
     }
 
@@ -53,7 +54,6 @@ object Libraries {
 
     object Presentation {
         const val orbitViewmodel = "org.orbit-mvi:orbit-viewmodel:$orbitVersion"
-        const val junitJupiter = "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         const val orbitMviTest = "org.orbit-mvi:orbit-test:$orbitVersion"
 
         const val viewmodel =

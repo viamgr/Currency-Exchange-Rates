@@ -1,3 +1,4 @@
+import app.vahid.gradle.base.getLocalProperty
 import app.vahid.gradle.base.implementation
 import app.vahid.gradle.base.kapt
 import app.vahid.gradle.base.testImplementation
@@ -9,6 +10,16 @@ plugins {
     id(ApplyPlugins.kotlinxSerialization)
     id(ApplyPlugins.daggerHiltPlugin)
 }
+
+android {
+    defaultConfig {
+        buildConfigField("String",
+            ConfigData.baseUrlKey,
+            "\"${getLocalProperty(ConfigData.baseUrlKey) as String}\"")
+    }
+
+}
+
 dependencies {
     testImplementation(Modules.CommonTestShared)
     implementation(Modules.CommonCore, Modules.Repository)

@@ -11,6 +11,7 @@ dependencies {
     api(kotlin("test-junit5"))
 
     implementation(
+        Libraries.Common.hiltCompiler,
         Libraries.Test.testRunner,
         Libraries.Ui.appcompat,
         Libraries.Test.hiltAndroidTest,

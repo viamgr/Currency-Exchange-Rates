@@ -1,4 +1,4 @@
-import app.vahid.gradle.base.apiA
+import app.vahid.gradle.base.api
 import app.vahid.gradle.base.implementation
 
 plugins {
@@ -11,7 +11,7 @@ dependencies {
 
     api(kotlin("test-junit5"))
 
-    apiA(
+    api(
         Libraries.Test.junitTest,
         Libraries.Test.coroutinesTest,
         Libraries.Test.kotestRunner,

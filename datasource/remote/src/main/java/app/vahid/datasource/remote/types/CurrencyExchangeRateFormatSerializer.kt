@@ -1,32 +1,25 @@
 package app.vahid.datasource.remote.types
 
-import app.vahid.repository.model.CurrencyRateEntity
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.Json
+import app.vahid.datasource.remote.response.CurrencyRateResponse
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonTransformingSerializer
 import kotlinx.serialization.json.double
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-object CurrencyExchangeRateFormatSerializer : KSerializer<CurrencyExchangeRateFormat> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("CurrencyExchangeRateFormat", PrimitiveKind.STRING)
+object CurrencyExchangeRateFormatSerializer :
+    JsonTransformingSerializer<List<CurrencyRateResponse>>(ListSerializer(CurrencyRateResponse.serializer())) {
 
-    override fun serialize(encoder: Encoder, value: CurrencyExchangeRateFormat) {
-        encoder.encodeString(Json.encodeToString(value.value))
-    }
-
-    override fun deserialize(decoder: Decoder): CurrencyExchangeRateFormat {
-        return Json.parseToJsonElement(decoder.decodeString()).jsonObject.map {
-            CurrencyRateEntity(currencyId = it.key, rate = it.value.jsonPrimitive.double)
-        }.let {
-            CurrencyExchangeRateFormat(it)
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        val list: List<JsonObject> = element.jsonObject.map {
+            JsonObject(mapOf("currencyId" to JsonPrimitive(it.key),
+                "rate" to JsonPrimitive(it.value.jsonPrimitive.double)))
         }
-
+        return JsonArray(list)
     }
+
 }

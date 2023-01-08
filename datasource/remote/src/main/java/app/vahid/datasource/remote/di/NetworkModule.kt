@@ -1,5 +1,6 @@
 package app.vahid.datasource.remote.di
 
+import app.vahid.datasource.remote.BuildConfig.BASE_URL
 import app.vahid.datasource.remote.api.CurrencyExchangeApi
 import app.vahid.datasource.remote.base.ResultCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -56,7 +57,7 @@ object NetworkModule {
         converterFactory: Converter.Factory,
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("")
+            .baseUrl(BASE_URL)
             .client(client)
             .addCallAdapterFactory(resultCallAdapterFactory)
             .addConverterFactory(converterFactory)

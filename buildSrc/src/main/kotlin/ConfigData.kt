@@ -10,5 +10,6 @@ object ConfigData {
     val jvmTarget = JavaVersion.VERSION_11
     const val testBuildType = "staging"
     const val testInstrumentationRunner = "$appID.base_ui.android_test_shared.CustomTestRunner"
+    const val baseUrlKey = "BASE_URL"
 }
 

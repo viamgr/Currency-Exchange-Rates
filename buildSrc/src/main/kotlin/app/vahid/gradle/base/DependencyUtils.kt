@@ -22,7 +22,7 @@ fun DependencyHandler.implementation(vararg library: String) {
     }
 }
 
-fun DependencyHandler.apiA(vararg library: String) {
+fun DependencyHandler.api(vararg library: String) {
     library.forEach {
         add("api", it)
     }
@@ -43,5 +43,11 @@ fun DependencyHandler.testImplementation(vararg modules: Module) {
 fun DependencyHandler.androidTestImplementation(vararg modules: Module) {
     modules.forEach {
         add("androidTestImplementation", project(it.path))
+    }
+}
+
+fun DependencyHandler.androidTestImplementation(vararg library: String) {
+    library.forEach {
+        add("androidTestImplementation", it)
     }
 }

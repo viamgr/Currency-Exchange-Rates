@@ -1,4 +1,4 @@
-import app.vahid.gradle.base.apiA
+import app.vahid.gradle.base.api
 import app.vahid.gradle.base.testImplementation
 
 plugins {
@@ -10,7 +10,7 @@ dependencies {
 
     testImplementation(Modules.CommonTestShared)
 
-    apiA(
+    api(
         Libraries.Common.timber,
         Libraries.Common.hiltAndroid,
         Libraries.Common.coroutineAndroid,

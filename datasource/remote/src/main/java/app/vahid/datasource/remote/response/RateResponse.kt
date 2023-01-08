@@ -1,7 +1,7 @@
 package app.vahid.datasource.remote.response
 
 
-import app.vahid.datasource.remote.types.CurrencyExchangeRateFormat
+import app.vahid.datasource.remote.types.CurrencyExchangeRateFormatSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -12,5 +12,6 @@ internal data class RateResponse(
     @SerialName("date")
     val date: String,
     @SerialName("rates")
-    val rates: CurrencyExchangeRateFormat,
+    @Serializable(with = CurrencyExchangeRateFormatSerializer::class)
+    val rates: List<CurrencyRateResponse>,
 )

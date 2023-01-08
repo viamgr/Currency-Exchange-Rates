@@ -5,6 +5,7 @@ import app.vahid.common.core.map
 import app.vahid.datasource.remote.api.CurrencyExchangeApi
 import app.vahid.repository.datasource.CurrencyExchangeRemoteDataSource
 import app.vahid.repository.model.CurrencyRateEntity
+import app.vahid.repository.model.CurrencyRateListEntity
 import javax.inject.Inject
 
 internal class CurrencyExchangeRemoteDataSourceImpl @Inject constructor(
@@ -19,12 +20,16 @@ internal class CurrencyExchangeRemoteDataSourceImpl @Inject constructor(
         return WrappedResult.success(Unit)
     }
 
-    override fun getCurrencyRateList(): WrappedResult<List<CurrencyRateEntity>> {
+    override fun getCurrencyRateList(): WrappedResult<CurrencyRateListEntity> {
         return currencyExchangeApi.getRates()
             .map { response ->
-                response.rates.value.map {
-                    CurrencyRateEntity(it.currencyId, it.rate)
-                }
+                CurrencyRateListEntity(
+                    base = response.base,
+                    date = response.date,
+                    rates = response.rates.map {
+                        CurrencyRateEntity(it.currencyId, it.rate)
+                    }
+                )
             }
     }
 }

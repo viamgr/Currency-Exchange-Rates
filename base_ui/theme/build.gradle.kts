@@ -1,4 +1,4 @@
-import app.vahid.gradle.base.apiA
+import app.vahid.gradle.base.api
 
 plugins {
     id(ApplyPlugins.androidLibrary)
@@ -18,7 +18,7 @@ android {
 
 dependencies {
 
-    apiA(
+    api(
         Libraries.Ui.appcompat,
         Libraries.Ui.composeNavigation,
         Libraries.Ui.composeMaterial,

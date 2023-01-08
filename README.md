@@ -1,3 +1,75 @@
+# Project Documentation
+
+”Logic will get you from A to B. Imagination will take you everywhere.” - Albert Einstein An
+
+### Summary
+
+This is an Implementation of a native android project with a flexible and maintainable architectural
+design using Clean architecture.
+
+### Key Features:
+
+- 100% Kotlin
+- Modular Design
+- Clean Architecture
+- TDD Based
+
+### Design Structure
+
+Here is the list of technologies that used in this project:
+
+1. UI Layer
+    - Compose
+    - Ui test
+    - Material Design
+2. Presentation Layer
+    - MVI
+    - Flow
+    - Orbit library
+3. Test Env
+    - KoTest
+    - Mockk
+    - Instrumented tests
+    - Ui testing
+    - Compose testing
+4. Base Features
+    - Coroutine
+    - KTS
+    - Hilt
+    - Error Handling
+5. Data Layer
+    - Room
+    - Retrofit
+    - Pagination
+
+### Project modular relationships diagram:
+
+<img alt="Project Structure" src="doc/project_structure.png" width="600"/>
+
+- **app:** An orchestra module that has access to all modules to organize dependency injection.
+- _common_:
+    - **test_shared:** Defined utils for unit tests that can be implemented in every needed module
+    - **core:** Some utils that can be used on the whole of the app's structure.
+    - **presentation:** Base presentation layer
+    - **domain_common:** Common domain utilities of the business layer logic.
+- _base_ui_:
+    - **common:** Common utilities for the UI layers.
+    - **android_test_shared:** Defined utils for android tests that can be implemented in every
+      android module
+    - **theme:** Theme, styles, colors, dimensions, and other theme-related resources.
+- _feature_:
+    - **currency_exchange:ui:** Implemented Xml/Compose designs and UI controllers.
+    - **currency_exchange:presentation:** A non-UI-related middleman to organize UI events and side
+      effects with communications with the domain layer and map their results as a view state.
+- _domain_:
+    - **domain:gateway:** An interface layer for the domain layer to communicate with the repository
+      layer.
+    - **domain:use_case:** Implementation of business layer logic.
+- _repository_: Implementations of the repository layer
+- _datasource_:
+    - **cache:** Implementation of the local cache persistence.
+    - **remote:** API implementation for taking responsibility for how data are coming from by
+      exposing some real or mock data module.
 
 ### Dependencies :
 

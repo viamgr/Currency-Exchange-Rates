@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
 import javax.inject.Inject
 
-class GetTransactionRatesUseCase @Inject constructor(
+class GetExchangeRatesUseCase @Inject constructor(
     private val rateExchangerRepository: RateExchangerRepository,
     private val getBaseCurrencyRateUseCase: GetBaseCurrencyRateUseCase,
 ) :
-    FlowUseCase<GetTransactionRatesUseCase.Request, GetTransactionRatesUseCase.Response>() {
+    FlowUseCase<GetExchangeRatesUseCase.Request, GetExchangeRatesUseCase.Response>() {
     override fun execute(parameter: Request): Flow<Response> {
 
         return getBaseCurrencyRateUseCase(Unit)
@@ -26,7 +26,6 @@ class GetTransactionRatesUseCase @Inject constructor(
                 }
             }
     }
-
 
     data class Request(
         val originCurrencyId: String,

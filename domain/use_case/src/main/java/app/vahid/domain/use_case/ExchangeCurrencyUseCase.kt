@@ -1,7 +1,6 @@
 package app.vahid.domain.use_case
 
 import app.vahid.common.core.WrappedResult
-import app.vahid.common.core.enums.ExchangeType
 import app.vahid.common.core.flatMap
 import app.vahid.common.usecase_common.FlowUseCase
 import app.vahid.domain.gateway.model.Transaction
@@ -16,7 +15,6 @@ class ExchangeCurrencyUseCase @Inject constructor(
 ) : FlowUseCase<ExchangeCurrencyUseCase.Request, WrappedResult<Unit>>() {
     override fun execute(parameter: Request): Flow<WrappedResult<Unit>> {
         return rateExchangerRepository.exchangeCurrency(
-            parameter.exchangeType,
             parameter.amount,
             parameter.originCurrency,
             parameter.destinationCurrency
@@ -24,7 +22,6 @@ class ExchangeCurrencyUseCase @Inject constructor(
             it.flatMap {
                 addTransactionUseCase(
                     Transaction(
-                        exchangeType = parameter.exchangeType,
                         originCurrency = parameter.originCurrency,
                         destinationCurrency = parameter.destinationCurrency,
                         amount = parameter.amount
@@ -35,7 +32,6 @@ class ExchangeCurrencyUseCase @Inject constructor(
     }
 
     data class Request(
-        val exchangeType: ExchangeType,
         val originCurrency: String,
         val destinationCurrency: String,
         val amount: Double,

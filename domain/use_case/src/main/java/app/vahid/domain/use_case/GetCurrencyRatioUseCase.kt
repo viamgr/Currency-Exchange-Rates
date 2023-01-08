@@ -7,13 +7,13 @@ import javax.inject.Inject
 
 class GetCurrencyRatioUseCase @Inject constructor(
     private val exchangeCalculatorUseCase: ExchangeCalculatorUseCase,
-    private val getTransactionRatesUseCase: GetTransactionRatesUseCase,
+    private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
 ) :
     FlowUseCase<GetCurrencyRatioUseCase.Request, Double>() {
     override fun execute(parameter: Request): Flow<Double> {
 
-        return getTransactionRatesUseCase(
-            GetTransactionRatesUseCase.Request(
+        return getExchangeRatesUseCase(
+            GetExchangeRatesUseCase.Request(
                 originCurrencyId = parameter.originCurrency,
                 destinationCurrencyId = parameter.destinationCurrency)
         )

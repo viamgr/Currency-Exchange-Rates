@@ -14,7 +14,7 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
     override fun isolationMode(): IsolationMode = IsolationMode.InstancePerTest
 
     private val exchangeCalculatorUseCase: ExchangeCalculatorUseCase = mockk()
-    private val getTransactionRatesUseCase: GetTransactionRatesUseCase = mockk()
+    private val getTransactionRatesUseCase: GetExchangeRatesUseCase = mockk()
 
     private val originCurrencyRate = 1.0
     private val destinationCurrencyRate = 1.5
@@ -86,14 +86,14 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
     }
 
 
-    private fun getTransactionRatesUseCaseFakeResponse(): GetTransactionRatesUseCase.Request {
-        val getTransactionRatesUseCaseResponse = GetTransactionRatesUseCase.Response(
+    private fun getTransactionRatesUseCaseFakeResponse(): GetExchangeRatesUseCase.Request {
+        val getTransactionRatesUseCaseResponse = GetExchangeRatesUseCase.Response(
             originCurrencyRate = originCurrencyRate,
             destinationCurrencyRate = destinationCurrencyRate,
             baseCurrencyRate = baseCurrencyRate
         )
 
-        return GetTransactionRatesUseCase.Request(
+        return GetExchangeRatesUseCase.Request(
             originCurrencyId = originCurrencyId,
             destinationCurrencyId = destinationCurrencyId
         ).also {

@@ -6,7 +6,7 @@ import app.vahid.domain.gateway.model.CurrencyRate
 import app.vahid.domain.gateway.model.Transaction
 import kotlinx.coroutines.flow.Flow
 
-interface RateExchangerRepository {
+interface CurrencyExchangeRepository {
 
     fun getBaseCurrency(): Flow<String>
 
@@ -20,8 +20,11 @@ interface RateExchangerRepository {
         amount: Double,
         currencyId: String,
         baseCurrencyId: String,
-    ): Flow<WrappedResult<Unit>>
+    ): WrappedResult<Unit>
 
-    fun addTransaction(transaction: Transaction): WrappedResult<Unit>
+    suspend fun addTransaction(transaction: Transaction): WrappedResult<Unit>
 
+    suspend fun addCurrencyRateList(list: List<CurrencyRate>)
+
+    suspend fun updateCurrencyRateList(): WrappedResult<Unit>
 }

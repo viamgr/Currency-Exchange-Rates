@@ -1,25 +1,27 @@
 package app.vahid.domain.use_case
 
+import app.vahid.common.core.IoDispatcher
 import app.vahid.common.core.WrappedResult
 import app.vahid.common.core.flatMap
-import app.vahid.common.usecase_common.FlowUseCase
+import app.vahid.common.usecase_common.SuspendUseCase
 import app.vahid.domain.gateway.model.Transaction
-import app.vahid.domain.gateway.repository.RateExchangerRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import app.vahid.domain.gateway.repository.CurrencyExchangeRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class ExchangeCurrencyUseCase @Inject constructor(
-    private val rateExchangerRepository: RateExchangerRepository,
+    private val currencyExchangeRepository: CurrencyExchangeRepository,
     private val addTransactionUseCase: AddTransactionUseCase,
-) : FlowUseCase<ExchangeCurrencyUseCase.Request, WrappedResult<Unit>>() {
-    override fun execute(parameter: Request): Flow<WrappedResult<Unit>> {
-        return rateExchangerRepository.exchangeCurrency(
-            parameter.amount,
-            parameter.originCurrency,
-            parameter.destinationCurrency
-        ).map {
-            it.flatMap {
+    @IoDispatcher ioDispatcher: CoroutineDispatcher,
+) : SuspendUseCase<ExchangeCurrencyUseCase.Request, WrappedResult<Unit>>(ioDispatcher) {
+    override suspend fun execute(parameter: Request): WrappedResult<Unit> {
+        return currencyExchangeRepository
+            .exchangeCurrency(
+                parameter.amount,
+                parameter.originCurrency,
+                parameter.destinationCurrency
+            )
+            .flatMap {
                 addTransactionUseCase(
                     Transaction(
                         originCurrency = parameter.originCurrency,
@@ -28,7 +30,6 @@ class ExchangeCurrencyUseCase @Inject constructor(
                     )
                 )
             }
-        }
     }
 
     data class Request(
@@ -36,5 +37,4 @@ class ExchangeCurrencyUseCase @Inject constructor(
         val destinationCurrency: String,
         val amount: Double,
     )
-
 }

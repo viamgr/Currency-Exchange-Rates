@@ -1,9 +1,9 @@
 package app.vahid.repository.datasource
 
 import app.vahid.common.core.WrappedResult
-import app.vahid.domain.gateway.model.CurrencyRate
+import app.vahid.repository.model.CurrencyRateEntity
 
-interface ExchangeCurrencyRemoteDataSource {
+interface CurrencyExchangeRemoteDataSource {
 
     fun exchangeCurrency(
         amount: Double,
@@ -11,5 +11,5 @@ interface ExchangeCurrencyRemoteDataSource {
         baseCurrencyId: String,
     ): WrappedResult<Unit>
 
-    fun getCurrencyRateList(): WrappedResult<List<CurrencyRate>>
+    fun getCurrencyRateList(): WrappedResult<List<CurrencyRateEntity>>
 }

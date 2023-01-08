@@ -6,7 +6,7 @@ import app.vahid.repository.model.BalanceEntity
 import app.vahid.repository.model.CurrencyRateEntity
 import kotlinx.coroutines.flow.Flow
 
-interface ExchangeCurrencyLocalDataSource {
+interface CurrencyExchangeLocalDataSource {
 
     fun getBaseCurrency(): Flow<String>
 

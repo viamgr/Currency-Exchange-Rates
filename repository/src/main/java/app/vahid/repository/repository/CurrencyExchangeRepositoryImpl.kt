@@ -6,8 +6,8 @@ import app.vahid.domain.gateway.model.Balance
 import app.vahid.domain.gateway.model.CurrencyRate
 import app.vahid.domain.gateway.model.Transaction
 import app.vahid.domain.gateway.repository.CurrencyExchangeRepository
-import app.vahid.repository.datasource.ExchangeCurrencyLocalDataSource
-import app.vahid.repository.datasource.ExchangeCurrencyRemoteDataSource
+import app.vahid.repository.datasource.CurrencyExchangeLocalDataSource
+import app.vahid.repository.datasource.CurrencyExchangeRemoteDataSource
 import app.vahid.repository.mapper.BalanceMapper
 import app.vahid.repository.mapper.CurrencyRateMapper
 import kotlinx.coroutines.flow.Flow
@@ -15,18 +15,18 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 internal class CurrencyExchangeRepositoryImpl @Inject constructor(
-    private val exchangeCurrencyLocalDataSource: ExchangeCurrencyLocalDataSource,
-    private val exchangeCurrencyRemoteDataSource: ExchangeCurrencyRemoteDataSource,
+    private val currencyExchangeLocalDataSource: CurrencyExchangeLocalDataSource,
+    private val currencyExchangeRemoteDataSource: CurrencyExchangeRemoteDataSource,
     private val balanceMapper: BalanceMapper,
     private val currencyRateMapper: CurrencyRateMapper,
 ) : CurrencyExchangeRepository {
 
     override fun getBaseCurrency(): Flow<String> {
-        return exchangeCurrencyLocalDataSource.getBaseCurrency()
+        return currencyExchangeLocalDataSource.getBaseCurrency()
     }
 
     override fun getCurrencyRateList(): Flow<List<CurrencyRate>> {
-        return exchangeCurrencyLocalDataSource.getCurrencyRateList()
+        return currencyExchangeLocalDataSource.getCurrencyRateList()
             .map { rateEntities ->
                 rateEntities.map {
                     currencyRateMapper(it)
@@ -35,29 +35,27 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateCurrencyRateList(): WrappedResult<Unit> {
-        return exchangeCurrencyRemoteDataSource.getCurrencyRateList()
+        return currencyExchangeRemoteDataSource.getCurrencyRateList()
             .map { currencyRates ->
-                exchangeCurrencyLocalDataSource.addCurrencyRateList(
-                    currencyRates.map {
-                        currencyRateMapper(it)
-                    }
+                currencyExchangeLocalDataSource.addCurrencyRateList(
+                    currencyRates
                 )
             }
     }
 
     override suspend fun addCurrencyRateList(list: List<CurrencyRate>) {
-        return exchangeCurrencyLocalDataSource
+        return currencyExchangeLocalDataSource
             .addCurrencyRateList(list = list.map {
                 currencyRateMapper(it)
             })
     }
 
     override fun getCurrencyRate(currencyId: String): Flow<Double> {
-        return exchangeCurrencyLocalDataSource.getCurrencyRate(currencyId)
+        return currencyExchangeLocalDataSource.getCurrencyRate(currencyId)
     }
 
     override fun getBalanceList(): Flow<List<Balance>> {
-        return exchangeCurrencyLocalDataSource
+        return currencyExchangeLocalDataSource
             .getBalanceList()
             .map { balanceEntities ->
                 balanceEntities.map {
@@ -71,7 +69,7 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
         currencyId: String,
         baseCurrencyId: String,
     ): WrappedResult<Unit> {
-        return exchangeCurrencyRemoteDataSource
+        return currencyExchangeRemoteDataSource
             .exchangeCurrency(
                 amount = amount,
                 currencyId = currencyId,
@@ -80,7 +78,7 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addTransaction(transaction: Transaction): WrappedResult<Unit> {
-        return exchangeCurrencyLocalDataSource.addTransaction(transaction = transaction)
+        return currencyExchangeLocalDataSource.addTransaction(transaction = transaction)
     }
 
 }

@@ -4,14 +4,16 @@ import app.vahid.common.core.WrappedResult
 import app.vahid.common.core.enums.ExchangeType
 import app.vahid.common.core.flatMap
 import app.vahid.common.usecase_common.FlowUseCase
+import app.vahid.domain.gateway.model.Transaction
 import app.vahid.domain.gateway.repository.RateExchangerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class PurchaseCurrencyUseCase @Inject constructor(
+class ExchangeCurrencyUseCase @Inject constructor(
     private val rateExchangerRepository: RateExchangerRepository,
-) : FlowUseCase<PurchaseCurrencyUseCase.Request, WrappedResult<Unit>>() {
+    private val addTransactionUseCase: AddTransactionUseCase,
+) : FlowUseCase<ExchangeCurrencyUseCase.Request, WrappedResult<Unit>>() {
     override fun execute(parameter: Request): Flow<WrappedResult<Unit>> {
         return rateExchangerRepository.exchangeCurrency(
             parameter.exchangeType,
@@ -20,10 +22,13 @@ class PurchaseCurrencyUseCase @Inject constructor(
             parameter.destinationCurrency
         ).map {
             it.flatMap {
-                rateExchangerRepository.addExchangeRecord(
-                    originCurrency = parameter.originCurrency,
-                    destinationCurrency = parameter.destinationCurrency,
-                    amount = parameter.amount
+                addTransactionUseCase(
+                    Transaction(
+                        exchangeType = parameter.exchangeType,
+                        originCurrency = parameter.originCurrency,
+                        destinationCurrency = parameter.destinationCurrency,
+                        amount = parameter.amount
+                    )
                 )
             }
         }

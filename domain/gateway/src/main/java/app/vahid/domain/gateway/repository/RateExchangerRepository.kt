@@ -2,8 +2,8 @@ package app.vahid.domain.gateway.repository
 
 import app.vahid.common.core.WrappedResult
 import app.vahid.common.core.enums.ExchangeType
-import app.vahid.domain.gateway.model.Balance
 import app.vahid.domain.gateway.model.CurrencyRate
+import app.vahid.domain.gateway.model.Transaction
 import kotlinx.coroutines.flow.Flow
 
 interface RateExchangerRepository {
@@ -14,20 +14,16 @@ interface RateExchangerRepository {
 
     fun getCurrencyRate(currencyId: String): Flow<Double>
 
-    fun getMyBalanceList(): Flow<List<Balance>>
+    fun getMyBalanceList(): Flow<List<Transaction>>
 
     fun exchangeCurrency(
         exchangeType: ExchangeType,
         amount: Double,
         currencyId: String,
         baseCurrencyId: String,
-    ): Flow<WrappedResult<Boolean>>
+    ): Flow<WrappedResult<Unit>>
 
 
-    fun addExchangeRecord(
-        originCurrency: String,
-        destinationCurrency: String,
-        amount: Double,
-    ): WrappedResult<Unit>
+    fun addTransaction(transaction: Transaction): WrappedResult<Unit>
 
 }

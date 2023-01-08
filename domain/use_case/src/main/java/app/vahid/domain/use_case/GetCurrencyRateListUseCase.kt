@@ -9,6 +9,6 @@ import javax.inject.Inject
 class GetCurrencyRateListUseCase @Inject constructor(private val rateExchangerRepository: RateExchangerRepository) :
     FlowUseCase<Unit, List<CurrencyRate>>() {
     override fun execute(parameter: Unit): Flow<List<CurrencyRate>> {
-        return rateExchangerRepository.getCurrencyRate()
+        return rateExchangerRepository.getCurrencyRateList()
     }
 }

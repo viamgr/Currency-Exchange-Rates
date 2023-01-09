@@ -139,8 +139,10 @@ class ExchangerViewModel @Inject constructor(
     }
 
     private fun updateCurrencyRateListEffect(): Flow<ExchangerEvent> = flow {
-        updateCurrencyRateListUseCase(Unit).onFailure { errorType: UiErrorType, _ ->
-            emitAll(applyFailedEffect(errorType))
+        updateCurrencyRateListUseCase(Unit).collect {
+            it.onFailure { errorType: UiErrorType, _ ->
+                emitAll(applyFailedEffect(errorType))
+            }
         }
     }
 

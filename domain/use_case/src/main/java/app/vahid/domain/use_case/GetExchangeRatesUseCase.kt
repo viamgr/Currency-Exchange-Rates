@@ -6,6 +6,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
+import timber.log.Timber
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -15,6 +16,7 @@ class GetExchangeRatesUseCase @Inject constructor(
 ) :
     FlowUseCase<GetExchangeRatesUseCase.Request, GetExchangeRatesUseCase.Response>() {
     override fun execute(parameter: Request): Flow<Response> {
+        Timber.d("GetExchangeRatesUseCase parameter: $parameter")
 
         return getBaseCurrencyRateUseCase(Unit)
             .flatMapConcat { baseCurrencyRate: Double ->
@@ -22,7 +24,9 @@ class GetExchangeRatesUseCase @Inject constructor(
                     currencyExchangeRepository.getCurrencyRate(parameter.originCurrencyId),
                     currencyExchangeRepository.getCurrencyRate(parameter.destinationCurrencyId)
                 ) { originCurrencyRate: Double, destinationCurrencyRate: Double ->
-                    Response(originCurrencyRate = originCurrencyRate,
+                    Timber.d("GetExchangeRatesUseCase $originCurrencyRate, $destinationCurrencyRate")
+                    Response(
+                        originCurrencyRate = originCurrencyRate,
                         destinationCurrencyRate = destinationCurrencyRate,
                         baseCurrencyRate = baseCurrencyRate)
                 }

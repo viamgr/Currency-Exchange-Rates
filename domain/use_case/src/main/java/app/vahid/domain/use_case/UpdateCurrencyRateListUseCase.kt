@@ -12,7 +12,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-private const val INTERVAL_DELAY = 5000L
+private const val INTERVAL_DELAY = 500000L
 
 class UpdateCurrencyRateListUseCase @Inject constructor(
     private val currencyExchangeRepository: CurrencyExchangeRepository,

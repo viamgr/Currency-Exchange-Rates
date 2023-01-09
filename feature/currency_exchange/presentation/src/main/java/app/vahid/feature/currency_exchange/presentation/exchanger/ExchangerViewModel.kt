@@ -2,6 +2,7 @@
 
 package app.vahid.feature.currency_exchange.presentation.exchanger
 
+import androidx.lifecycle.viewModelScope
 import app.vahid.common.core.fold
 import app.vahid.common.core.onFailure
 import app.vahid.common.presentation.BaseViewModel
@@ -25,11 +26,14 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +49,17 @@ class ExchangerViewModel @Inject constructor(
 
     init {
         dispatchIntent(Init)
+        viewModelScope.launch {
+            container.stateFlow.collect {
+                getCurrencyRatioUseCase(
+                    GetCurrencyRatioUseCase.Request(
+                        originCurrency = container.stateFlow.value.selectedOriginCurrency,
+                        destinationCurrency = container.stateFlow.value.selectedDestinationCurrency,
+                        originAmount = container.stateFlow.value.originAmount)
+                )
+            }
+
+        }
     }
 
     override suspend fun handleIntent(intent: ExchangerIntent): Flow<ExchangerEvent> {
@@ -115,8 +130,12 @@ class ExchangerViewModel @Inject constructor(
     private fun applyLoadingEffect(state: Boolean) =
         listOf(ExchangerEffect.OnLoadingStateChanged(state)).asFlow()
 
-    private fun onOriginValueUpdatedEffect(amount: Double): Flow<ExchangerEvent> {
-        return flowOf(ExchangerEffect.OnUpdateOriginValue(amount))
+    private fun onOriginValueUpdatedEffect(amount: String): Flow<ExchangerEvent> = flow {
+        amount.runCatching {
+            toDouble()
+        }.onSuccess {
+            emit(ExchangerEffect.OnUpdateOriginValue(it))
+        }
     }
 
     private fun onOriginCurrencyUpdatedEffect(currencyId: String): Flow<ExchangerEvent> {
@@ -149,13 +168,10 @@ class ExchangerViewModel @Inject constructor(
     private fun getDestinationAmountEffect(): Flow<ExchangerEvent> {
         return container
             .stateFlow
+            .filter { it.selectedOriginCurrency.isNotEmpty() && it.selectedDestinationCurrency.isNotEmpty() }
             .flatMapConcat {
-                getCurrencyRatioUseCase(
-                    GetCurrencyRatioUseCase.Request(
-                        originCurrency = container.stateFlow.value.selectedOriginCurrency,
-                        destinationCurrency = container.stateFlow.value.selectedDestinationCurrency,
-                        originAmount = container.stateFlow.value.originAmount)
-                )
+                Timber.d("ExchangerViewModel getDestinationAmountEffect $it")
+                getCurrencyRatioUseCase.flow
             }
             .map {
                 ExchangerEffect.OnUpdateDestinationValue(it)
@@ -167,6 +183,7 @@ class ExchangerViewModel @Inject constructor(
             .flatMapConcat { balances ->
                 val currencyList = balances.map { it.currencyId }
                 listOf(
+                    ExchangerEffect.OnUpdateSelectedOrigin(balances.first().currencyId),
                     ExchangerEffect.OnUpdateOriginRateList(currencyList),
                     ExchangerEffect.OnUpdateMyBalances(balances)
                 ).asFlow()
@@ -174,10 +191,14 @@ class ExchangerViewModel @Inject constructor(
     }
 
     private fun getRateListEffect(): Flow<ExchangerEvent> {
-        return getCurrencyRateListUseCase(Unit).map { rates ->
-            ExchangerEffect.OnUpdateDestinationRateList(
-                rates.map { it.currencyId })
-        }
+        return getCurrencyRateListUseCase(Unit)
+            .flatMapConcat { rates ->
+                listOf(
+                    ExchangerEffect.OnUpdateDestinationRateList(rates.map { it.currencyId }),
+                    ExchangerEffect.OnUpdateDestinationCurrency(rates.first().currencyId),
+                )
+                    .asFlow()
+            }
     }
 
 }

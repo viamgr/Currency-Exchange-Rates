@@ -23,12 +23,14 @@ class ExchangeCurrencyUseCase @Inject constructor(
     override suspend fun execute(parameter: Request): WrappedResult<Unit> {
         val fee = getFee()
 
-        val destinationAmount = getCurrencyRatioUseCase(
+        val currencyRatioUseCase = getCurrencyRatioUseCase
+        currencyRatioUseCase(
             GetCurrencyRatioUseCase.Request(parameter.originCurrency,
                 parameter.destinationCurrency,
                 parameter.originAmount
             )
-        ).first()
+        )
+        val destinationAmount = currencyRatioUseCase.flow.first()
 
         return currencyExchangeRepository
             .exchangeCurrency(

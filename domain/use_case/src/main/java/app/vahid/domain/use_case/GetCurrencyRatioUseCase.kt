@@ -1,23 +1,27 @@
 package app.vahid.domain.use_case
 
-import app.vahid.common.usecase_common.FlowUseCase
+import app.vahid.common.core.IoDispatcher
+import app.vahid.common.usecase_common.SubjectUseCase
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class GetCurrencyRatioUseCase @Inject constructor(
     private val exchangeCalculatorUseCase: ExchangeCalculatorUseCase,
     private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
-) :
-    FlowUseCase<GetCurrencyRatioUseCase.Request, Double>() {
-    override fun execute(parameter: Request): Flow<Double> {
-
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+) : SubjectUseCase<GetCurrencyRatioUseCase.Request, Double>(ioDispatcher) {
+    override suspend fun createObservable(parameter: Request): Flow<Double> {
         return getExchangeRatesUseCase(
             GetExchangeRatesUseCase.Request(
                 originCurrencyId = parameter.originCurrency,
                 destinationCurrencyId = parameter.destinationCurrency)
         )
             .map { response ->
+                Timber.d("GetCurrencyRatioUseCase response $response")
+
                 val baseCurrencyAmount =
                     exchangeCalculatorUseCase(
                         ExchangeCalculatorUseCase.Request(
@@ -26,14 +30,16 @@ class GetCurrencyRatioUseCase @Inject constructor(
                             amount = parameter.originAmount
                         )
                     )
-
+                Timber.d("GetCurrencyRatioUseCase baseCurrencyAmount $baseCurrencyAmount")
                 exchangeCalculatorUseCase(
                     ExchangeCalculatorUseCase.Request(
                         amount = baseCurrencyAmount,
                         originCurrencyRate = response.baseCurrencyRate,
                         destinationCurrencyRate = response.destinationCurrencyRate
                     )
-                )
+                ).also {
+                    Timber.d("GetCurrencyRatioUseCase destinationCurrencyRate $it")
+                }
             }
     }
 

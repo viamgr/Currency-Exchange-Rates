@@ -83,6 +83,7 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
                 }
             }
             .filterNotNull()
+
     }
 
     override suspend fun addTransaction(transaction: TransactionEntity): WrappedResult<Unit> {

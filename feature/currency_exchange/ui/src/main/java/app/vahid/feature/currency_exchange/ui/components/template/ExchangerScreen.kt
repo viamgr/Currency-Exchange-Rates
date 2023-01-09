@@ -1,16 +1,24 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package app.vahid.feature.currency_exchange.ui.components.template
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -18,9 +26,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.vahid.base_ui.common.components.organism.DropDownItem
 import app.vahid.base_ui.theme.Theme
+import app.vahid.common.presentation.dispatchIntent
 import app.vahid.common.presentation.error_handling.UiErrorType
 import app.vahid.domain.gateway.model.Balance
 import app.vahid.feature.currency_exchange.presentation.exchanger.ExchangerViewModel
+import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerIntent
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerState
 import app.vahid.feature.currency_exchange.ui.R
 import org.orbitmvi.orbit.compose.collectAsState
@@ -32,13 +42,23 @@ fun ExchangerScreen(
 ) {
     val state by viewModel.collectAsState()
 
-    ExchangerScreen(state)
+    ExchangerScreen(
+        state = state,
+        onSubmitClicked = {
+            viewModel.dispatchIntent(ExchangerIntent.OnSubmitClicked)
+        },
+        onOriginAmountChanged = { value ->
+            viewModel.dispatchIntent(ExchangerIntent.OnOriginValueUpdated(value))
+        }
+    )
 }
 
 
 @Composable
 fun ExchangerScreen(
     state: ExchangerState,
+    onSubmitClicked: () -> Unit,
+    onOriginAmountChanged: (value: String) -> Unit,
 ) = with(state) {
     ExchangerScreen(
         errorType = errorType,
@@ -50,6 +70,8 @@ fun ExchangerScreen(
         selectedOriginCurrency = selectedOriginCurrency,
         selectedDestinationCurrency = selectedDestinationCurrency,
         destinationAmount = destinationAmount,
+        onSubmitClicked = onSubmitClicked,
+        onOriginAmountChanged = onOriginAmountChanged,
     )
 }
 
@@ -64,6 +86,8 @@ fun ExchangerScreen(
     selectedOriginCurrency: String = "",
     selectedDestinationCurrency: String = "",
     destinationAmount: Double = 0.0,
+    onSubmitClicked: () -> Unit,
+    onOriginAmountChanged: (value: String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.padding(
@@ -84,7 +108,6 @@ fun ExchangerScreen(
             BalancesListUi(balanceList)
         }
 
-
         item {
             Text("Currency Exchange")
         }
@@ -92,24 +115,27 @@ fun ExchangerScreen(
         item {
 
             ExchangerActionsUi(
-                originRateList,
-                destinationRateList,
-                selectedDestinationCurrency,
-                selectedOriginCurrency, originAmount, destinationAmount
+                originRateList = originRateList,
+                destinationRateList = destinationRateList,
+                selectedDestinationCurrency = selectedDestinationCurrency,
+                selectedOriginCurrency = selectedOriginCurrency,
+                originAmount = originAmount,
+                destinationAmount = destinationAmount,
+                onOriginAmountChanged = onOriginAmountChanged
             )
         }
 
         item {
-            SubmitButton()
+            SubmitButton(onSubmitClicked)
         }
 
     }
 }
 
 @Composable
-fun SubmitButton() {
+fun SubmitButton(onSubmitClicked: () -> Unit) {
 
-    Button(onClick = { /*TODO*/ }) {
+    Button(onClick = onSubmitClicked) {
         Text(text = "Submit")
     }
 }
@@ -122,17 +148,29 @@ fun ExchangerActionsUi(
     selectedOriginCurrency: String,
     originAmount: Double,
     destinationAmount: Double,
+    onOriginAmountChanged: (value: String) -> Unit,
 ) {
     Column {
 
-        ExchangerActionRow(originAmount, selectedOriginCurrency, originRateList)
+        ExchangerActionRow(
+            amount = originAmount,
+            currency = selectedOriginCurrency,
+            itemList = originRateList, onOriginAmountChanged = onOriginAmountChanged)
 
-        ExchangerActionRow(destinationAmount, selectedDestinationCurrency, destinationRateList)
+        ExchangerActionRow(
+            amount = destinationAmount,
+            currency = selectedDestinationCurrency,
+            itemList = destinationRateList)
     }
 }
 
 @Composable
-private fun ExchangerActionRow(amount: Double, currency: String, itemList: List<String>) {
+private fun ExchangerActionRow(
+    amount: Double,
+    currency: String,
+    itemList: List<String>,
+    onOriginAmountChanged: (value: String) -> Unit = {},
+) {
     Row {
         Image(
             modifier = Modifier.rotate(90F),
@@ -140,7 +178,13 @@ private fun ExchangerActionRow(amount: Double, currency: String, itemList: List<
             contentDescription = "Up"
         )
         Text(text = "Sell")
-        Text(text = amount.toString())
+
+        EditText(
+            value = amount.toString(),
+            readOnly = false,
+            onValueChange = onOriginAmountChanged,
+            modifier = Modifier.fillMaxWidth(0.4F)
+        )
 
         Text(text = currency)
 
@@ -178,6 +222,28 @@ fun BalancesListUi(balanceList: List<Balance>) {
             }
         }
     }
+}
+
+@Composable
+private fun EditText(
+    value: String,
+    readOnly: Boolean = false,
+    modifier: Modifier = Modifier,
+    onValueChange: (value: String) -> Unit = {},
+) {
+
+    var text by remember(key1 = value) { mutableStateOf(value) }
+
+    TextField(
+        modifier = modifier,
+        value = text,
+        readOnly = readOnly,
+        onValueChange = {
+            text = it
+            onValueChange(it)
+        },
+    )
+
 }
 
 @Composable

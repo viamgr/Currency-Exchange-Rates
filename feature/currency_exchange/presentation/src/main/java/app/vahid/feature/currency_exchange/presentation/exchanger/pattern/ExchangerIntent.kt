@@ -6,7 +6,7 @@ sealed interface ExchangerIntent : Intent, ExchangerEvent {
 
     object Init : ExchangerIntent
 
-    data class OnOriginValueUpdated(val amount: Double) : ExchangerIntent
+    data class OnOriginValueUpdated(val amount: String) : ExchangerIntent
 
     object OnSubmitClicked : ExchangerIntent
 

@@ -31,5 +31,5 @@ abstract class SubjectUseCase<in P, out T>(private val dispatcher: CoroutineDisp
         paramState.tryEmit(params)
     }
 
-    protected abstract suspend fun createObservable(params: P): Flow<T>
+    protected abstract suspend fun createObservable(parameter: P): Flow<T>
 }

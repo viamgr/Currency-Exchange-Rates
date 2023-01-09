@@ -22,6 +22,8 @@ class ExchangerReducer @Inject constructor() :
             is ExchangerEffect.OnUpdateOriginCurrency -> state.copy(selectedOriginCurrency = effect.currencyId)
             is ExchangerEffect.OnUpdateOriginRateList -> state.copy(originRateList = effect.list)
             is ExchangerEffect.OnUpdateOriginValue -> state.copy(originAmount = effect.amount)
+            is ExchangerEffect.OnUpdateSelectedOrigin -> state.copy(selectedOriginCurrency = effect.currencyId)
+            is ExchangerEffect.OnUpdateSelectedDestination -> state.copy(selectedDestinationCurrency = effect.currencyId)
         }
     }
 

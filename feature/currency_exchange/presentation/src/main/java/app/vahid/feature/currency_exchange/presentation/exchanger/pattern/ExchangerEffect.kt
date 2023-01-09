@@ -24,5 +24,8 @@ sealed interface ExchangerEffect : Effect, ExchangerEvent {
 
     data class OnUpdateOriginValue(val amount: Double) : ExchangerEffect
 
+    data class OnUpdateSelectedOrigin(val currencyId: String) : ExchangerEffect
+
+    data class OnUpdateSelectedDestination(val currencyId: String) : ExchangerEffect
 }
 

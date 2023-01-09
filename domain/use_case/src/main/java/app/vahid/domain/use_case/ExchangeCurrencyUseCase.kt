@@ -20,7 +20,7 @@ class ExchangeCurrencyUseCase @Inject constructor(
     @IoDispatcher ioDispatcher: CoroutineDispatcher,
 ) : SuspendUseCase<ExchangeCurrencyUseCase.Request, WrappedResult<Unit>>(ioDispatcher) {
     override suspend fun execute(parameter: Request): WrappedResult<Unit> {
-        Timber.d("ExchangeCurrencyUseCase $parameter")
+        Timber.d("getTransactionCount 111111")
 
         val currencyRatioUseCase = getCurrencyRatioUseCase
         currencyRatioUseCase(

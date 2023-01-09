@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
+import timber.log.Timber
 
 abstract class SubjectUseCase<in P, out T>(private val dispatcher: CoroutineDispatcher) {
     // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
@@ -28,6 +29,7 @@ abstract class SubjectUseCase<in P, out T>(private val dispatcher: CoroutineDisp
         .distinctUntilChanged()
 
     operator fun invoke(params: P) {
+        Timber.d("SubjectUseCase ${this.javaClass} ${flow.hashCode()}")
         paramState.tryEmit(params)
     }
 

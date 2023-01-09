@@ -23,11 +23,9 @@ sealed interface ExchangerEffect : Effect, ExchangerEvent {
 
     data class OnUpdateDestinationValue(val amount: BigDecimal) : ExchangerEffect
 
-    data class OnUpdateOriginValue(val amount: BigDecimal, val hasEnoughBalance: Boolean) :
+    data class OnUpdateOriginValue(val amount: BigDecimal) :
         ExchangerEffect
 
-    data class OnUpdateSelectedOrigin(val currencyId: String) : ExchangerEffect
-
-    data class OnUpdateSelectedDestination(val currencyId: String) : ExchangerEffect
+    data class OnUpdateSubmitButtonState(val hasEnoughBalance: Boolean) : ExchangerEffect
 }
 

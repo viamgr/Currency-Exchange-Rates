@@ -26,6 +26,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
@@ -34,7 +36,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,7 +61,6 @@ class ExchangerViewModel @Inject constructor(
                         originAmount = container.stateFlow.value.originAmount)
                 )
             }
-
         }
     }
 
@@ -79,7 +79,6 @@ class ExchangerViewModel @Inject constructor(
         merge(applyLoadingEffect(true), applyExchangeCurrencyEffect())
 
     private fun applyExchangeCurrencyEffect() = flow {
-        Timber.d("ExchangerViewModel applyExchangeCurrencyEffect")
         exchangeCurrency()
             .cacheErrors()
             .fold(
@@ -130,23 +129,26 @@ class ExchangerViewModel @Inject constructor(
     private fun applyLoadingEffect(state: Boolean) =
         listOf(ExchangerEffect.OnLoadingStateChanged(state)).asFlow()
 
-    private fun onOriginValueUpdatedEffect(amount: String): Flow<ExchangerEvent> = flow {
-        getFeeUseCase(Unit).collect { fee: Double ->
-            amount.runCatching {
-                toBigDecimal()
-            }.onSuccess {
-                with(container.stateFlow.value) {
-                    val balanceOfCurrency =
-                        balanceList.first { selectedOriginCurrency == it.currencyId }.amount
+
+    private fun onSubmitButtonUpdatedEffect(): Flow<ExchangerEvent> = flow {
+        container.stateFlow.combine(getFeeUseCase(Unit)) { state, fee ->
+            with(state) {
+                balanceList.firstOrNull { selectedOriginCurrency == it.currencyId }?.let {
+                    val balanceOfCurrency = it.amount
                     val hasEnoughBalance =
-                        it <= balanceOfCurrency - (fee.toBigDecimal() * balanceOfCurrency)
-                    emit(ExchangerEffect.OnUpdateOriginValue(it,
-                        hasEnoughBalance))
-
+                        originAmount <= balanceOfCurrency - (fee.toBigDecimal() * balanceOfCurrency)
+                    emit(ExchangerEffect.OnUpdateSubmitButtonState(hasEnoughBalance))
                 }
-
             }
+        }.collect()
 
+    }
+
+    private fun onOriginValueUpdatedEffect(amount: String): Flow<ExchangerEvent> = flow {
+        amount.runCatching {
+            toBigDecimal()
+        }.onSuccess {
+            emit(ExchangerEffect.OnUpdateOriginValue(it))
         }
     }
 
@@ -165,7 +167,8 @@ class ExchangerViewModel @Inject constructor(
             updateCurrencyRateListEffect(),
             getRateListEffect(),
             getMyBalanceListEffect(),
-            getDestinationAmountEffect()
+            getDestinationAmountEffect(),
+            onSubmitButtonUpdatedEffect()
         )
     }
 
@@ -182,7 +185,6 @@ class ExchangerViewModel @Inject constructor(
             .stateFlow
             .filter { it.selectedOriginCurrency.isNotEmpty() && it.selectedDestinationCurrency.isNotEmpty() }
             .flatMapConcat {
-                Timber.d("ExchangerViewModel getDestinationAmountEffect $it")
                 getCurrencyRatioUseCase.flow
             }
             .map {
@@ -194,7 +196,7 @@ class ExchangerViewModel @Inject constructor(
         return getMyBalanceListUseCase(Unit)
             .flatMapConcat { balances ->
                 listOf(
-                    ExchangerEffect.OnUpdateSelectedOrigin(balances.first().currencyId),
+                    ExchangerEffect.OnUpdateOriginCurrency(balances.first().currencyId),
                     ExchangerEffect.OnUpdateOriginRateList(balances.map { it.currencyId }),
                     ExchangerEffect.OnUpdateMyBalances(balances)
                 ).asFlow()

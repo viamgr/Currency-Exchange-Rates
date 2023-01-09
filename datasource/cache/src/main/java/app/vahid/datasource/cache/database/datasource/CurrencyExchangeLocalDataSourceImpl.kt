@@ -14,6 +14,9 @@ import app.vahid.repository.model.TransactionEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEmpty
+import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -32,10 +35,16 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
     }
 
     override fun getTransactionCount(): Flow<Int> {
+        Timber.d("getTransactionCount")
+
         return appDatabase
             .transactionDao()
-            .getTransactionCount()
-            .filterNotNull()
+            .getTransactionCount().onEach {
+                Timber.d("getTransactionCount $it")
+            }.onEmpty {
+                Timber.d("getTransactionCount  onEmpty ")
+                emit(0)
+            }
     }
 
     override fun getCurrencyRateList(): Flow<List<CurrencyRateEntity>> {

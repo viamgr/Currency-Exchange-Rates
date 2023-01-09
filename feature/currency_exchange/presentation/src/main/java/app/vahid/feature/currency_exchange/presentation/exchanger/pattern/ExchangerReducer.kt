@@ -12,6 +12,10 @@ class ExchangerReducer @Inject constructor() :
         return when (effect) {
             is ExchangerEffect.OnErrorStateChanged -> state.copy(errorType = effect.uiErrorType)
             is ExchangerEffect.OnLoadingStateChanged -> state.copy(isLoading = effect.isLoading)
+            is ExchangerEffect.OnUpdateDestinationRates -> TODO()
+            is ExchangerEffect.OnUpdateDestinationValue -> TODO()
+            is ExchangerEffect.OnUpdateMyBalances -> TODO()
+            is ExchangerEffect.OnUpdateOriginRates -> TODO()
         }
     }
 

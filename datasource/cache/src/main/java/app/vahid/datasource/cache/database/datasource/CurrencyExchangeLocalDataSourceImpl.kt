@@ -29,6 +29,10 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
             )
     }
 
+    override fun getTransactionCount(): Flow<Int> {
+        return appDatabase.transactionDao().getTransactionCount()
+    }
+
     override fun getCurrencyRateList(): Flow<List<CurrencyRateEntity>> {
         return appDatabase.currencyRateDao()
             .getCurrencyRateList()
@@ -76,6 +80,7 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
                     destinationCurrency = transaction.destinationCurrency,
                     originAmount = transaction.originAmount,
                     destinationAmount = transaction.destinationAmount,
+                    fee = transaction.fee
                 )
             ).toResult()
     }

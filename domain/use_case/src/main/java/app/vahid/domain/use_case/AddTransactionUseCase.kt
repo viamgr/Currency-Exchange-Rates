@@ -2,7 +2,6 @@ package app.vahid.domain.use_case
 
 import app.vahid.common.core.IoDispatcher
 import app.vahid.common.core.WrappedResult
-import app.vahid.common.core.flatMap
 import app.vahid.common.usecase_common.SuspendUseCase
 import app.vahid.domain.gateway.model.Transaction
 import app.vahid.domain.gateway.repository.CurrencyExchangeRepository
@@ -14,8 +13,6 @@ class AddTransactionUseCase @Inject constructor(
     @IoDispatcher ioDispatcher: CoroutineDispatcher,
 ) : SuspendUseCase<Transaction, WrappedResult<Unit>>(ioDispatcher) {
     override suspend fun execute(parameter: Transaction): WrappedResult<Unit> {
-        return currencyExchangeRepository.addTransaction(parameter).flatMap {
-            currencyExchangeRepository.addTransaction(parameter)
-        }
+        return currencyExchangeRepository.addTransaction(parameter)
     }
 }

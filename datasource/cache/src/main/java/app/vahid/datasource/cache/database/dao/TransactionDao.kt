@@ -10,4 +10,8 @@ interface TransactionDao : BaseDao<CachedTransaction> {
 
     @Query("SELECT * FROM `transaction`")
     fun getTransactionList(): Flow<List<CachedTransaction>>
+
+
+    @Query("SELECT count(*) as count FROM `transaction`")
+    fun getTransactionCount(): Flow<Int>
 }

@@ -6,4 +6,5 @@ data class Transaction(
     val destinationCurrency: String,
     val originAmount: Double,
     val destinationAmount: Double,
+    val fee: Double,
 )

@@ -21,4 +21,6 @@ interface CurrencyExchangeLocalDataSource {
     suspend fun addCurrencyRateList(list: List<CurrencyRateEntity>)
 
     suspend fun setBaseCurrency(baseCurrency: String)
+
+    fun getTransactionCount(): Flow<Int>
 }

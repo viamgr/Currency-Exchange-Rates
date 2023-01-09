@@ -27,4 +27,6 @@ interface CurrencyExchangeRepository {
     suspend fun addCurrencyRateList(list: List<CurrencyRate>)
 
     suspend fun updateCurrencyRateList(): WrappedResult<Unit>
+
+    fun getTransactionCount(): Flow<Int>
 }

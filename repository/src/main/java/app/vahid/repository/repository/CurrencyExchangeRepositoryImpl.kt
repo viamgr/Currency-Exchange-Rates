@@ -46,6 +46,10 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
             }
     }
 
+    override fun getTransactionCount(): Flow<Int> {
+        return currencyExchangeLocalDataSource.getTransactionCount()
+    }
+
     override suspend fun addCurrencyRateList(list: List<CurrencyRate>) {
         return currencyExchangeLocalDataSource
             .addCurrencyRateList(list = list.map {

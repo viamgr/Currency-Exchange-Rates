@@ -58,7 +58,16 @@ val dimensionValues = DimensionValues()
 val typographyValues: TypographyValues
     @Composable get() = with(MaterialTheme.typography) {
         return TypographyValues(
-            style = bodyMedium.copy(color = Theme.colorScheme.primary),
+            labelSmall = bodySmall.copy(color = Theme.colorScheme.toolbarText),
+            labelMedium = bodySmall.copy(color = Theme.colorScheme.labelMedium),
+            bodySmall = bodySmall.copy(color = Theme.colorScheme.primary),
+            bodyMedium = bodyMedium.copy(color = Theme.colorScheme.primary),
+            bodyMediumReceive = bodyMedium.copy(color = Theme.colorScheme.receive),
+            bodyLarge = bodyLarge.copy(color = Theme.colorScheme.primary),
+            button = bodyLarge.copy(
+                color = Theme.colorScheme.secondary
+            )
+
         )
     }
 

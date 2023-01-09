@@ -5,5 +5,11 @@ import androidx.compose.ui.text.TextStyle
 
 @Immutable
 data class TypographyValues(
-    val style: TextStyle,
+    val labelSmall: TextStyle,
+    val labelMedium: TextStyle,
+    val bodySmall: TextStyle,
+    val bodyMediumReceive: TextStyle,
+    val bodyMedium: TextStyle,
+    val bodyLarge: TextStyle,
+    val button: TextStyle,
 )

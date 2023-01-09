@@ -49,6 +49,12 @@ fun ExchangerScreen(
         },
         onOriginAmountChanged = { value ->
             viewModel.dispatchIntent(ExchangerIntent.OnOriginValueUpdated(value))
+        },
+        onDestinationCurrencyChanged = {
+            viewModel.dispatchIntent(ExchangerIntent.OnDestinationCurrencyUpdated(it))
+        },
+        onOriginCurrencyChanged = {
+            viewModel.dispatchIntent(ExchangerIntent.OnOriginValueUpdated(it))
         }
     )
 }
@@ -59,6 +65,8 @@ fun ExchangerScreen(
     state: ExchangerState,
     onSubmitClicked: () -> Unit,
     onOriginAmountChanged: (value: String) -> Unit,
+    onDestinationCurrencyChanged: (String) -> Unit,
+    onOriginCurrencyChanged: (String) -> Unit,
 ) = with(state) {
     ExchangerScreen(
         errorType = errorType,
@@ -72,6 +80,8 @@ fun ExchangerScreen(
         destinationAmount = destinationAmount,
         onSubmitClicked = onSubmitClicked,
         onOriginAmountChanged = onOriginAmountChanged,
+        onDestinationCurrencyChanged = onDestinationCurrencyChanged,
+        onOriginCurrencyChanged = onOriginCurrencyChanged,
     )
 }
 
@@ -88,6 +98,8 @@ fun ExchangerScreen(
     destinationAmount: Double = 0.0,
     onSubmitClicked: () -> Unit,
     onOriginAmountChanged: (value: String) -> Unit,
+    onDestinationCurrencyChanged: (String) -> Unit,
+    onOriginCurrencyChanged: (String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.padding(
@@ -121,7 +133,9 @@ fun ExchangerScreen(
                 selectedOriginCurrency = selectedOriginCurrency,
                 originAmount = originAmount,
                 destinationAmount = destinationAmount,
-                onOriginAmountChanged = onOriginAmountChanged
+                onOriginAmountChanged = onOriginAmountChanged,
+                onOriginCurrencyChanged = onOriginCurrencyChanged,
+                onDestinationCurrencyChanged = onDestinationCurrencyChanged
             )
         }
 
@@ -149,18 +163,25 @@ fun ExchangerActionsUi(
     originAmount: Double,
     destinationAmount: Double,
     onOriginAmountChanged: (value: String) -> Unit,
+    onOriginCurrencyChanged: (String) -> Unit,
+    onDestinationCurrencyChanged: (String) -> Unit,
 ) {
     Column {
 
         ExchangerActionRow(
             amount = originAmount,
             currency = selectedOriginCurrency,
-            itemList = originRateList, onOriginAmountChanged = onOriginAmountChanged)
+            itemList = originRateList, onOriginAmountChanged = onOriginAmountChanged,
+            onCurrencyChanged = onOriginCurrencyChanged,
+            label = "Sell")
 
         ExchangerActionRow(
             amount = destinationAmount,
             currency = selectedDestinationCurrency,
-            itemList = destinationRateList)
+            itemList = destinationRateList,
+            onCurrencyChanged = onDestinationCurrencyChanged,
+            label = "Receive"
+        )
     }
 }
 
@@ -169,7 +190,9 @@ private fun ExchangerActionRow(
     amount: Double,
     currency: String,
     itemList: List<String>,
+    label: String,
     onOriginAmountChanged: (value: String) -> Unit = {},
+    onCurrencyChanged: (String) -> Unit,
 ) {
     Row {
         Image(
@@ -177,7 +200,7 @@ private fun ExchangerActionRow(
             painter = painterResource(id = R.drawable.ic_baseline_arrow_circle_left_24),
             contentDescription = "Up"
         )
-        Text(text = "Sell")
+        Text(text = label)
 
         EditText(
             value = amount.toString(),
@@ -190,7 +213,9 @@ private fun ExchangerActionRow(
 
         DropDownItem(
             items = itemList,
-            onItemSelected = {},
+            onItemSelected = {
+                onCurrencyChanged(itemList[it])
+            },
             title = {
                 Text(text = it)
             }

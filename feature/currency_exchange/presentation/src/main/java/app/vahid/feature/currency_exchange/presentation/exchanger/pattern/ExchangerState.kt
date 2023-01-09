@@ -15,5 +15,6 @@ data class ExchangerState(
     val isSubmitButtonEnabled: Boolean = true,
     val selectedOriginCurrency: String = "",
     val selectedDestinationCurrency: String = "",
+    val fee: Double = 0.0,
     val destinationAmount: BigDecimal = BigDecimal.ZERO,
 ) : State

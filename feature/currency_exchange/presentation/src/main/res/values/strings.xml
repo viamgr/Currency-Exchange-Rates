@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="screen_title_rate_list">Rate List</string>
-
+    <string name="message_currency_exchange_success">You have converted %s %s to %s %s. Commission Fee - %s %s</string>
 </resources>

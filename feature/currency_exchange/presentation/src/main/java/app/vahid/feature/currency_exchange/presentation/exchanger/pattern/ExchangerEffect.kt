@@ -27,5 +27,7 @@ sealed interface ExchangerEffect : Effect, ExchangerEvent {
         ExchangerEffect
 
     data class OnUpdateSubmitButtonState(val hasEnoughBalance: Boolean) : ExchangerEffect
+
+    data class OnUpdateFeeValue(val fee: Double) : ExchangerEffect
 }
 

@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import app.vahid.base_ui.common.graph.MessageDialog
+import app.vahid.base_ui.common.graph.addCommonGraph
 import app.vahid.feature.currency_exchange.ui.graph.ExchangeRateGraph
 import app.vahid.feature.currency_exchange.ui.graph.addRateListGraph
 
@@ -20,8 +22,10 @@ fun AppNavigator(
             startDestination = ExchangeRateGraph.route,
         ) {
             addRateListGraph {
-
+                navController.navigate(MessageDialog.createRoute(it))
             }
+
+            addCommonGraph()
         }
     }
 

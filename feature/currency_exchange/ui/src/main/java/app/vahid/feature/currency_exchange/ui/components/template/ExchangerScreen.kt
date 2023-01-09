@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.vahid.base_ui.common.components.organism.DropDownItem
@@ -31,20 +32,39 @@ import app.vahid.common.presentation.error_handling.UiErrorType
 import app.vahid.domain.gateway.model.Balance
 import app.vahid.feature.currency_exchange.presentation.exchanger.ExchangerViewModel
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerIntent
-import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerState
+import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerSideEffect
 import app.vahid.feature.currency_exchange.ui.R
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
 
 
 @Composable
 fun ExchangerScreen(
     viewModel: ExchangerViewModel = hiltViewModel(),
+    onNavigateSuccessDialog: (String) -> Unit,
 ) {
-    val state by viewModel.collectAsState()
+
+    val context = LocalContext.current
+
+    viewModel.collectSideEffect {
+        when (it) {
+            is ExchangerSideEffect.OnCurrencyConverted -> onNavigateSuccessDialog(
+                context.getString(
+                    R.string.message_currency_exchange_success,
+                    it.originAmount.toString(),
+                    it.originCurrency,
+                    it.destinationAmount.toString(),
+                    it.destinationCurrency,
+                    it.originCurrency,
+                    it.fee.toString(),
+                )
+            )
+        }
+    }
 
     ExchangerScreen(
-        state = state,
+        viewModel = viewModel,
         onSubmitClicked = {
             viewModel.dispatchIntent(ExchangerIntent.OnSubmitClicked)
         },
@@ -63,28 +83,33 @@ fun ExchangerScreen(
 
 @Composable
 fun ExchangerScreen(
-    state: ExchangerState,
+    viewModel: ExchangerViewModel,
     onSubmitClicked: () -> Unit,
     onOriginAmountChanged: (value: String) -> Unit,
     onDestinationCurrencyChanged: (String) -> Unit,
     onOriginCurrencyChanged: (String) -> Unit,
-) = with(state) {
-    ExchangerScreen(
-        errorType = errorType,
-        isLoading = isLoading,
-        balanceList = balanceList,
-        destinationRateList = destinationRateList,
-        originRateList = originRateList,
-        originAmount = originAmount,
-        selectedOriginCurrency = selectedOriginCurrency,
-        selectedDestinationCurrency = selectedDestinationCurrency,
-        destinationAmount = destinationAmount,
-        isSubmitButtonEnabled = isSubmitButtonEnabled,
-        onSubmitClicked = onSubmitClicked,
-        onOriginAmountChanged = onOriginAmountChanged,
-        onDestinationCurrencyChanged = onDestinationCurrencyChanged,
-        onOriginCurrencyChanged = onOriginCurrencyChanged,
-    )
+) {
+    val state by viewModel.collectAsState()
+
+    with(state) {
+        ExchangerScreen(
+            errorType = errorType,
+            isLoading = isLoading,
+            balanceList = balanceList,
+            destinationRateList = destinationRateList,
+            originRateList = originRateList,
+            originAmount = originAmount,
+            selectedOriginCurrency = selectedOriginCurrency,
+            selectedDestinationCurrency = selectedDestinationCurrency,
+            destinationAmount = destinationAmount,
+            isSubmitButtonEnabled = isSubmitButtonEnabled,
+            onSubmitClicked = onSubmitClicked,
+            onOriginAmountChanged = onOriginAmountChanged,
+            onDestinationCurrencyChanged = onDestinationCurrencyChanged,
+            onOriginCurrencyChanged = onOriginCurrencyChanged,
+        )
+
+    }
 }
 
 @Composable

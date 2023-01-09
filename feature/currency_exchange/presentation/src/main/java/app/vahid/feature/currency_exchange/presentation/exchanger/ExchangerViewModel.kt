@@ -104,8 +104,8 @@ class ExchangerViewModel @Inject constructor(
                     originCurrency = selectedOriginCurrency,
                     destinationAmount = destinationAmount,
                     destinationCurrency = selectedDestinationCurrency,
+                    fee = fee,
                 )
-
             )
         }
 
@@ -138,6 +138,7 @@ class ExchangerViewModel @Inject constructor(
                     val hasEnoughBalance =
                         originAmount <= balanceOfCurrency - (fee.toBigDecimal() * balanceOfCurrency)
                     emit(ExchangerEffect.OnUpdateSubmitButtonState(hasEnoughBalance))
+                    emit(ExchangerEffect.OnUpdateFeeValue(fee))
                 }
             }
         }.collect()
@@ -194,6 +195,7 @@ class ExchangerViewModel @Inject constructor(
 
     private fun getMyBalanceListEffect(): Flow<ExchangerEvent> {
         return getMyBalanceListUseCase(Unit)
+            .filter { it.isNotEmpty() }
             .flatMapConcat { balances ->
                 listOf(
                     ExchangerEffect.OnUpdateOriginCurrency(balances.first().currencyId),

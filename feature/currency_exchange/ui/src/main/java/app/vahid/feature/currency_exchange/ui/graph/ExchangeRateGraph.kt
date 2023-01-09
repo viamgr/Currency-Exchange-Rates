@@ -19,11 +19,10 @@ object ExchangeRateGraph : Graph {
         override fun getLabelResourceId(): Int = R.string.screen_title_rate_list
     }
 
-
 }
 
 fun NavGraphBuilder.addRateListGraph(
-    onNavigateUpClicked: () -> Unit,
+    onNavigateSuccessDialog: (String) -> Unit,
 ) {
 
     navigation(
@@ -34,9 +33,8 @@ fun NavGraphBuilder.addRateListGraph(
         composable(
             screen = ExchangeRateGraph.RateListScreen
         ) {
-            ExchangerScreen()
+            ExchangerScreen(onNavigateSuccessDialog = onNavigateSuccessDialog)
         }
-
 
     }
 }

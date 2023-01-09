@@ -23,6 +23,7 @@ class ExchangerReducer @Inject constructor() :
             is ExchangerEffect.OnUpdateOriginRateList -> state.copy(originRateList = effect.list)
             is ExchangerEffect.OnUpdateOriginValue -> state.copy(originAmount = effect.amount)
             is ExchangerEffect.OnUpdateSubmitButtonState -> state.copy(isSubmitButtonEnabled = effect.hasEnoughBalance)
+            is ExchangerEffect.OnUpdateFeeValue -> state.copy(fee = effect.fee)
         }
     }
 

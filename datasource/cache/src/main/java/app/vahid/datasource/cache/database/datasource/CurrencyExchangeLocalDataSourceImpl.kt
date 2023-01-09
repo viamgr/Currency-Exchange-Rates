@@ -12,6 +12,7 @@ import app.vahid.repository.model.BalanceEntity
 import app.vahid.repository.model.CurrencyRateEntity
 import app.vahid.repository.model.TransactionEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -30,25 +31,33 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
     }
 
     override fun getTransactionCount(): Flow<Int> {
-        return appDatabase.transactionDao().getTransactionCount()
+        return appDatabase
+            .transactionDao()
+            .getTransactionCount()
+            .filterNotNull()
     }
 
     override fun getCurrencyRateList(): Flow<List<CurrencyRateEntity>> {
         return appDatabase.currencyRateDao()
             .getCurrencyRateList()
+            .filterNotNull()
             .map { rates ->
                 rates.map { CurrencyRateEntity(currencyId = it.id, rate = it.rate) }
             }
     }
 
     override fun getCurrencyRate(currencyId: String): Flow<Double> {
-        return appDatabase.currencyRateDao().getCurrencyRate(currencyId)
+        return appDatabase
+            .currencyRateDao()
+            .getCurrencyRate(currencyId)
+            .filterNotNull()
     }
 
     override fun getBalanceList(): Flow<List<BalanceEntity>> {
         return appDatabase
             .transactionDao()
             .getTransactionList()
+            .filterNotNull()
             .map { balances ->
 
                 val outcome = balances
@@ -73,6 +82,7 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
                     )
                 }
             }
+            .filterNotNull()
     }
 
     override suspend fun addTransaction(transaction: TransactionEntity): WrappedResult<Unit> {

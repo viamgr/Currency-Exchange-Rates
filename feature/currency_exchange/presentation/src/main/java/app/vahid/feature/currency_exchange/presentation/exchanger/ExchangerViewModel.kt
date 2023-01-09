@@ -168,7 +168,7 @@ class ExchangerViewModel @Inject constructor(
                 val currencyList = balances.map { it.currencyId }
                 listOf(
                     ExchangerEffect.OnUpdateOriginRateList(currencyList),
-                    ExchangerEffect.OnUpdateMyBalances(currencyList)
+                    ExchangerEffect.OnUpdateMyBalances(balances)
                 ).asFlow()
             }
     }

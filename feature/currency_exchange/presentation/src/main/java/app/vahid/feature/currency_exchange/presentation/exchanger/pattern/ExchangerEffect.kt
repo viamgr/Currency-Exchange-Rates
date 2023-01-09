@@ -2,6 +2,7 @@ package app.vahid.feature.currency_exchange.presentation.exchanger.pattern
 
 import app.vahid.common.presentation.error_handling.UiErrorType
 import app.vahid.common.presentation.pattern.Effect
+import app.vahid.domain.gateway.model.Balance
 
 sealed interface ExchangerEffect : Effect, ExchangerEvent {
 
@@ -9,7 +10,7 @@ sealed interface ExchangerEffect : Effect, ExchangerEvent {
 
     data class OnErrorStateChanged(val uiErrorType: UiErrorType?) : ExchangerEffect
 
-    data class OnUpdateMyBalances(val list: List<String>) : ExchangerEffect
+    data class OnUpdateMyBalances(val list: List<Balance>) : ExchangerEffect
 
     data class OnUpdateOriginRateList(val list: List<String>) : ExchangerEffect
 

@@ -31,6 +31,7 @@ dependencies {
     kapt(Libraries.Common.hiltCompiler)
 
     implementation(
+        Libraries.Ui.orbitCompose,
         Libraries.Ui.composeMaterial,
         Libraries.Common.coroutineAndroid,
         Libraries.Common.hiltAndroid,

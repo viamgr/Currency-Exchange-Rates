@@ -6,6 +6,7 @@ import app.vahid.base_ui.common.navigation.ArgumentScreen
 import app.vahid.base_ui.common.navigation.Graph
 import app.vahid.base_ui.common.navigation.composable
 import app.vahid.feature.currency_exchange.ui.R
+import app.vahid.feature.currency_exchange.ui.components.template.ExchangerScreen
 
 object ExchangeRateGraph : Graph {
     override val route: String = "main"
@@ -33,7 +34,7 @@ fun NavGraphBuilder.addRateListGraph(
         composable(
             screen = ExchangeRateGraph.RateListScreen
         ) {
-
+            ExchangerScreen()
         }
 
 

@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.vahid.base_ui.common.components.organism.DropDownItem
+import app.vahid.base_ui.common.components.organism.ErrorScreen
 import app.vahid.base_ui.theme.Theme
 import app.vahid.common.presentation.dispatchIntent
 import app.vahid.common.presentation.error_handling.UiErrorType
@@ -136,6 +137,12 @@ fun ExchangerScreen(
         )
     ) {
 
+        errorType?.let {
+            item {
+                ErrorScreen(it)
+            }
+        }
+
         item {
             ToolbarUi()
         }
@@ -168,7 +175,7 @@ fun ExchangerScreen(
         }
 
         item {
-            SubmitButton(isSubmitButtonEnabled, onSubmitClicked)
+            SubmitButton(isSubmitButtonEnabled && !isLoading, onSubmitClicked)
         }
 
     }

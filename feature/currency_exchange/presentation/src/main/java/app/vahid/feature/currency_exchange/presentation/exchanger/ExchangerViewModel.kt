@@ -5,6 +5,7 @@ package app.vahid.feature.currency_exchange.presentation.exchanger
 import androidx.lifecycle.viewModelScope
 import app.vahid.common.core.fold
 import app.vahid.common.core.onFailure
+import app.vahid.common.core.onSuccess
 import app.vahid.common.presentation.BaseViewModel
 import app.vahid.common.presentation.dispatchIntent
 import app.vahid.common.presentation.error_handling.UiErrorType
@@ -83,7 +84,7 @@ class ExchangerViewModel @Inject constructor(
             .cacheErrors()
             .fold(
                 onSuccess = {
-                    applySuccessfulEffect()
+                    applyLoadingEffect(false)
                 },
                 onFailure = { errorType: UiErrorType, _ ->
                     applyFailedEffect(errorType)
@@ -119,7 +120,7 @@ class ExchangerViewModel @Inject constructor(
         )
     }
 
-    private fun applyFailedEffect(error: UiErrorType) =
+    private fun applyFailedEffect(error: UiErrorType?) =
         merge(applyLoadingEffect(false), applyErrorEffect(error))
 
 
@@ -175,9 +176,15 @@ class ExchangerViewModel @Inject constructor(
 
     private fun updateCurrencyRateListEffect(): Flow<ExchangerEvent> = flow {
         updateCurrencyRateListUseCase(Unit).collect {
-            it.onFailure { errorType: UiErrorType, _ ->
-                emitAll(applyFailedEffect(errorType))
-            }
+            it
+                .cacheErrors()
+                .onSuccess {
+                    emitAll(merge(applyFailedEffect(null)))
+
+                }
+                .onFailure { errorType: UiErrorType, _ ->
+                    emitAll(applyFailedEffect(errorType))
+                }
         }
     }
 

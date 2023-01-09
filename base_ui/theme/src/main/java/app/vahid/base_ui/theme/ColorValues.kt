@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 @Immutable
 data class ColorValues(
     val primary: Color = Color(0xFF232529),
+    val warning: Color = Color(0xFFFF5722),
     val secondary: Color = Color(0xFF0589CA),
     val primaryBg: Color = Color(0XFFFFFFFF),
     val toolbarText: Color = Color(0xFFFFFFFF),

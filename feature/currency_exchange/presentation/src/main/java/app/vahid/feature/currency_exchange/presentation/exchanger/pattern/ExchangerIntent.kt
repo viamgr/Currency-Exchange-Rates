@@ -10,7 +10,10 @@ sealed interface ExchangerIntent : Intent, ExchangerEvent {
 
     object OnSubmitClicked : ExchangerIntent
 
-    object OnSelectOriginCurrency : ExchangerIntent
+    data class OnOriginCurrencyUpdated(val currencyId: String) : ExchangerIntent
+
+    data class OnDestinationCurrencyUpdated(val currencyId: String) : ExchangerIntent
+
 
 }
 

@@ -3,7 +3,6 @@ package app.vahid.feature.currency_exchange.presentation.exchanger.pattern
 import app.vahid.common.presentation.error_handling.UiErrorType
 import app.vahid.common.presentation.pattern.Effect
 import app.vahid.domain.gateway.model.Balance
-import app.vahid.domain.gateway.model.CurrencyRate
 
 sealed interface ExchangerEffect : Effect, ExchangerEvent {
 
@@ -13,11 +12,17 @@ sealed interface ExchangerEffect : Effect, ExchangerEvent {
 
     data class OnUpdateMyBalances(val balanceList: List<Balance>) : ExchangerEffect
 
-    data class OnUpdateOriginRates(val balanceList: List<CurrencyRate>) : ExchangerEffect
+    data class OnUpdateOriginRateList(val balanceList: List<String>) : ExchangerEffect
 
-    data class OnUpdateDestinationRates(val balanceList: List<CurrencyRate>) : ExchangerEffect
+    data class OnUpdateDestinationRateList(val balanceList: List<String>) : ExchangerEffect
+
+    data class OnUpdateOriginCurrency(val currencyId: String) : ExchangerEffect
+
+    data class OnUpdateDestinationCurrency(val currencyId: String) : ExchangerEffect
 
     data class OnUpdateDestinationValue(val amount: Double) : ExchangerEffect
+
+    data class OnUpdateOriginValue(val amount: Double) : ExchangerEffect
 
 }
 

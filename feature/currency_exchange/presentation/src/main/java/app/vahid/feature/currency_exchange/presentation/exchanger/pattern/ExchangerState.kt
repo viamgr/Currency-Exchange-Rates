@@ -9,5 +9,7 @@ data class ExchangerState(
     val isLoading: Boolean = true,
     val balanceList: List<Balance> = emptyList(),
     val originAmount: Double = 0.0,
+    val selectedOriginCurrency: String = "",
+    val selectedDestinationCurrency: String = "",
     val destinationAmount: Double = 0.0,
 ) : State

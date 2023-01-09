@@ -10,6 +10,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
+private const val MIN_TRANSACTION_FEE_FREE = 5
+private const val FEE_AMOUNT = 0.007
+
 class ExchangeCurrencyUseCase @Inject constructor(
     private val getTransactionCountUseCase: GetTransactionCountUseCase,
     private val currencyExchangeRepository: CurrencyExchangeRepository,
@@ -46,9 +49,10 @@ class ExchangeCurrencyUseCase @Inject constructor(
             }
     }
 
-    private suspend fun getFee() = if (getTransactionCountUseCase(Unit).first() >= 5)
-        0.007
-    else 0.0
+    private suspend fun getFee() =
+        if (getTransactionCountUseCase(Unit).first() >= MIN_TRANSACTION_FEE_FREE + 1)
+            FEE_AMOUNT
+        else 0.0
 
     data class Request(
         val originCurrency: String,

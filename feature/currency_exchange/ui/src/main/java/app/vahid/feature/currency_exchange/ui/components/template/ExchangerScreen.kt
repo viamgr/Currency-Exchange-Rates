@@ -34,6 +34,7 @@ import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.Exchan
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerState
 import app.vahid.feature.currency_exchange.ui.R
 import org.orbitmvi.orbit.compose.collectAsState
+import java.math.BigDecimal
 
 
 @Composable
@@ -92,10 +93,10 @@ fun ExchangerScreen(
     balanceList: List<Balance> = emptyList(),
     destinationRateList: List<String> = emptyList(),
     originRateList: List<String> = emptyList(),
-    originAmount: Double = 0.0,
+    originAmount: BigDecimal = BigDecimal.ZERO,
     selectedOriginCurrency: String = "",
     selectedDestinationCurrency: String = "",
-    destinationAmount: Double = 0.0,
+    destinationAmount: BigDecimal = BigDecimal.ZERO,
     onSubmitClicked: () -> Unit,
     onOriginAmountChanged: (value: String) -> Unit,
     onDestinationCurrencyChanged: (String) -> Unit,
@@ -160,8 +161,8 @@ fun ExchangerActionsUi(
     destinationRateList: List<String>,
     selectedDestinationCurrency: String,
     selectedOriginCurrency: String,
-    originAmount: Double,
-    destinationAmount: Double,
+    originAmount: BigDecimal,
+    destinationAmount: BigDecimal,
     onOriginAmountChanged: (value: String) -> Unit,
     onOriginCurrencyChanged: (String) -> Unit,
     onDestinationCurrencyChanged: (String) -> Unit,
@@ -187,7 +188,7 @@ fun ExchangerActionsUi(
 
 @Composable
 private fun ExchangerActionRow(
-    amount: Double,
+    amount: BigDecimal,
     currency: String,
     itemList: List<String>,
     label: String,

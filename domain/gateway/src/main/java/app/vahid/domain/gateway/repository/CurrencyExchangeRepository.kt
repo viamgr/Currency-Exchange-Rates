@@ -5,6 +5,7 @@ import app.vahid.domain.gateway.model.Balance
 import app.vahid.domain.gateway.model.CurrencyRate
 import app.vahid.domain.gateway.model.Transaction
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
 
 interface CurrencyExchangeRepository {
 
@@ -17,7 +18,7 @@ interface CurrencyExchangeRepository {
     fun getBalanceList(): Flow<List<Balance>>
 
     fun exchangeCurrency(
-        amount: Double,
+        amount: BigDecimal,
         currencyId: String,
         baseCurrencyId: String,
     ): WrappedResult<Unit>

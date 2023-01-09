@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.inject.Singleton
 
 @Module
@@ -40,8 +41,8 @@ object RoomModule {
                             CachedTransaction(
                                 originCurrency = "EUR",
                                 destinationCurrency = "EUR",
-                                originAmount = 0.0,
-                                destinationAmount = 1000.0,
+                                originAmount = BigDecimal.ZERO,
+                                destinationAmount = BigDecimal.valueOf(1000.0),
                                 fee = 0.0,
                             ))
                     }

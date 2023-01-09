@@ -13,6 +13,7 @@ import app.vahid.repository.mapper.CurrencyRateMapper
 import app.vahid.repository.mapper.TransactionMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class CurrencyExchangeRepositoryImpl @Inject constructor(
@@ -72,7 +73,7 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
     }
 
     override fun exchangeCurrency(
-        amount: Double,
+        amount: BigDecimal,
         currencyId: String,
         baseCurrencyId: String,
     ): WrappedResult<Unit> {

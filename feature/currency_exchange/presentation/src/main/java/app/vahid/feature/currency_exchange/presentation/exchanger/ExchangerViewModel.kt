@@ -73,11 +73,11 @@ class ExchangerViewModel @Inject constructor(
         }
     }
 
-    private fun onSubmitClickedEffect(): Flow<ExchangerEvent> = flow {
+    private fun onSubmitClickedEffect(): Flow<ExchangerEvent> =
         merge(applyLoadingEffect(true), applyExchangeCurrencyEffect())
-    }
 
     private fun applyExchangeCurrencyEffect() = flow {
+        Timber.d("ExchangerViewModel applyExchangeCurrencyEffect")
         exchangeCurrency()
             .cacheErrors()
             .fold(
@@ -109,16 +109,15 @@ class ExchangerViewModel @Inject constructor(
             )
         }
 
-    private suspend fun exchangeCurrency() =
+    private suspend fun exchangeCurrency() = with(container.stateFlow.value) {
         exchangeCurrencyUseCase(
-            with(container.stateFlow.value) {
-                ExchangeCurrencyUseCase.Request(
-                    originCurrency = selectedOriginCurrency,
-                    destinationCurrency = selectedDestinationCurrency,
-                    originAmount = originAmount
-                )
-            }
+            ExchangeCurrencyUseCase.Request(
+                originCurrency = selectedOriginCurrency,
+                destinationCurrency = selectedDestinationCurrency,
+                originAmount = originAmount
+            )
         )
+    }
 
     private fun applyFailedEffect(error: UiErrorType) =
         merge(applyLoadingEffect(false), applyErrorEffect(error))
@@ -132,7 +131,7 @@ class ExchangerViewModel @Inject constructor(
 
     private fun onOriginValueUpdatedEffect(amount: String): Flow<ExchangerEvent> = flow {
         amount.runCatching {
-            toDouble()
+            toBigDecimal()
         }.onSuccess {
             emit(ExchangerEffect.OnUpdateOriginValue(it))
         }
@@ -192,6 +191,7 @@ class ExchangerViewModel @Inject constructor(
 
     private fun getRateListEffect(): Flow<ExchangerEvent> {
         return getCurrencyRateListUseCase(Unit)
+            .filter { it.isNotEmpty() }
             .flatMapConcat { rates ->
                 listOf(
                     ExchangerEffect.OnUpdateDestinationRateList(rates.map { it.currencyId }),

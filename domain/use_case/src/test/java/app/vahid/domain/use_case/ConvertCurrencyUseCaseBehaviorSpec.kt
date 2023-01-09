@@ -106,8 +106,8 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
     private fun fakeCalculatorResponse(
         originCurrencyRate: Double,
         destinationCurrencyRate: Double,
-        amount: Double,
-        exchangedAmount: Double,
+        amount: BigDecimal,
+        exchangedamount: BigDecimal,
     ): ExchangeCalculatorUseCase.Request {
         return ExchangeCalculatorUseCase.Request(
             originCurrencyRate = originCurrencyRate,

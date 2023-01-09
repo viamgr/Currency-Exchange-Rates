@@ -6,6 +6,7 @@ import app.vahid.datasource.remote.api.CurrencyExchangeApi
 import app.vahid.repository.datasource.CurrencyExchangeRemoteDataSource
 import app.vahid.repository.model.CurrencyRateEntity
 import app.vahid.repository.model.CurrencyRateListEntity
+import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class CurrencyExchangeRemoteDataSourceImpl @Inject constructor(
@@ -13,7 +14,7 @@ internal class CurrencyExchangeRemoteDataSourceImpl @Inject constructor(
 ) :
     CurrencyExchangeRemoteDataSource {
     override fun exchangeCurrency(
-        amount: Double,
+        amount: BigDecimal,
         currencyId: String,
         baseCurrencyId: String,
     ): WrappedResult<Unit> {

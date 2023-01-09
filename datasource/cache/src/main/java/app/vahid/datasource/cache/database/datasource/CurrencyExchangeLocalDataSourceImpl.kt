@@ -14,6 +14,7 @@ import app.vahid.repository.model.TransactionEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
@@ -63,19 +64,20 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
                 val outcome = balances
                     .groupBy { it.originCurrency }
                     .mapValues { entry ->
-                        entry.value.sumOf { it.originAmount + (it.originAmount * it.fee) }
+                        entry.value.sumOf { it.originAmount + (it.originAmount * it.fee.toBigDecimal()) }
                     }
 
                 val income = balances
                     .groupBy { it.destinationCurrency }
                     .mapValues { entry ->
                         entry.value.sumOf {
-                            it.destinationAmount - (it.destinationAmount * it.fee)
+                            it.destinationAmount - (it.destinationAmount * it.fee.toBigDecimal())
                         }
                     }
 
                 (outcome.keys + income.keys).map {
-                    val amount = income.getOrDefault(it, 0.0) - outcome.getOrDefault(it, 0.0)
+                    val amount = income.getOrDefault(it, BigDecimal.ZERO) - outcome.getOrDefault(it,
+                        BigDecimal.ZERO)
                     BalanceEntity(
                         currencyId = it,
                         amount = amount

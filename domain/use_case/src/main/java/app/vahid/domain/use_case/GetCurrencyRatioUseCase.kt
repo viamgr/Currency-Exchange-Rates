@@ -6,14 +6,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class GetCurrencyRatioUseCase @Inject constructor(
     private val exchangeCalculatorUseCase: ExchangeCalculatorUseCase,
     private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-) : SubjectUseCase<GetCurrencyRatioUseCase.Request, Double>(ioDispatcher) {
-    override suspend fun createObservable(parameter: Request): Flow<Double> {
+) : SubjectUseCase<GetCurrencyRatioUseCase.Request, BigDecimal>(ioDispatcher) {
+    override suspend fun createObservable(parameter: Request): Flow<BigDecimal> {
         return getExchangeRatesUseCase(
             GetExchangeRatesUseCase.Request(
                 originCurrencyId = parameter.originCurrency,
@@ -47,7 +48,7 @@ class GetCurrencyRatioUseCase @Inject constructor(
     data class Request(
         val originCurrency: String,
         val destinationCurrency: String,
-        val originAmount: Double,
+        val originAmount: BigDecimal,
     )
 
 }

@@ -3,6 +3,7 @@ package app.vahid.feature.currency_exchange.presentation.exchanger.pattern
 import app.vahid.common.presentation.error_handling.UiErrorType
 import app.vahid.common.presentation.pattern.Effect
 import app.vahid.domain.gateway.model.Balance
+import java.math.BigDecimal
 
 sealed interface ExchangerEffect : Effect, ExchangerEvent {
 
@@ -20,9 +21,9 @@ sealed interface ExchangerEffect : Effect, ExchangerEvent {
 
     data class OnUpdateDestinationCurrency(val currencyId: String) : ExchangerEffect
 
-    data class OnUpdateDestinationValue(val amount: Double) : ExchangerEffect
+    data class OnUpdateDestinationValue(val amount: BigDecimal) : ExchangerEffect
 
-    data class OnUpdateOriginValue(val amount: Double) : ExchangerEffect
+    data class OnUpdateOriginValue(val amount: BigDecimal) : ExchangerEffect
 
     data class OnUpdateSelectedOrigin(val currencyId: String) : ExchangerEffect
 

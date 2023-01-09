@@ -8,6 +8,8 @@ import app.vahid.domain.gateway.model.Transaction
 import app.vahid.domain.gateway.repository.CurrencyExchangeRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
+import timber.log.Timber
+import java.math.BigDecimal
 import javax.inject.Inject
 
 private const val MIN_TRANSACTION_FEE_FREE = 5
@@ -21,6 +23,7 @@ class ExchangeCurrencyUseCase @Inject constructor(
     @IoDispatcher ioDispatcher: CoroutineDispatcher,
 ) : SuspendUseCase<ExchangeCurrencyUseCase.Request, WrappedResult<Unit>>(ioDispatcher) {
     override suspend fun execute(parameter: Request): WrappedResult<Unit> {
+        Timber.d("ExchangeCurrencyUseCase $parameter")
         val fee = getFee()
 
         val currencyRatioUseCase = getCurrencyRatioUseCase
@@ -59,6 +62,6 @@ class ExchangeCurrencyUseCase @Inject constructor(
     data class Request(
         val originCurrency: String,
         val destinationCurrency: String,
-        val originAmount: Double,
+        val originAmount: BigDecimal,
     )
 }

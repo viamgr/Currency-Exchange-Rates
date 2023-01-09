@@ -3,6 +3,7 @@ package app.vahid.datasource.cache.database.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.math.BigDecimal
 
 @Entity(tableName = "transaction",
     indices = [
@@ -16,7 +17,7 @@ data class CachedTransaction(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val originCurrency: String,
     val destinationCurrency: String,
-    val originAmount: Double,
-    val destinationAmount: Double,
+    val originAmount: BigDecimal,
+    val destinationAmount: BigDecimal,
     val fee: Double,
 )

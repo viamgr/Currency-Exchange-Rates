@@ -11,8 +11,8 @@ class TransactionMapper @Inject constructor() {
             destinationCurrency = destinationCurrency,
             originAmount = originAmount,
             destinationAmount = destinationAmount,
-
-            )
+            fee = fee
+        )
     }
 
     operator fun invoke(type: Transaction): TransactionEntity = with(type) {
@@ -21,6 +21,7 @@ class TransactionMapper @Inject constructor() {
             destinationCurrency = destinationCurrency,
             originAmount = originAmount,
             destinationAmount = destinationAmount,
+            fee = fee,
         )
     }
 }

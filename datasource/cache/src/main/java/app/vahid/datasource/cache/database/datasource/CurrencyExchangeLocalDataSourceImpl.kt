@@ -50,16 +50,19 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
             .transactionDao()
             .getTransactionList()
             .map { balances ->
+
                 val outcome = balances
                     .groupBy { it.originCurrency }
                     .mapValues { entry ->
-                        entry.value.sumOf { it.originAmount }
+                        entry.value.sumOf { it.originAmount + (it.originAmount * it.fee) }
                     }
 
                 val income = balances
                     .groupBy { it.destinationCurrency }
                     .mapValues { entry ->
-                        entry.value.sumOf { it.destinationAmount }
+                        entry.value.sumOf {
+                            it.destinationAmount - (it.destinationAmount * it.fee)
+                        }
                     }
 
                 (outcome.keys + income.keys).map {
@@ -92,6 +95,5 @@ internal class CurrencyExchangeLocalDataSourceImpl @Inject constructor(
                 .toTypedArray()
             )
     }
-
 
 }

@@ -42,6 +42,7 @@ object RoomModule {
                                 destinationCurrency = "EUR",
                                 originAmount = 0.0,
                                 destinationAmount = 1000.0,
+                                fee = 0.0,
                             ))
                     }
                 }

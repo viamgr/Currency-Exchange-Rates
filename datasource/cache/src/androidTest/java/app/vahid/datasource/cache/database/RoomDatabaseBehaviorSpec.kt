@@ -43,7 +43,8 @@ class RoomDatabaseBehaviorSpec {
                 originCurrency = "EUR",
                 destinationCurrency = "EUR",
                 originAmount = 0.0,
-                destinationAmount = 1000.0
+                destinationAmount = 1000.0,
+                fee = 0.1
             )
         )
 
@@ -52,7 +53,8 @@ class RoomDatabaseBehaviorSpec {
                 originCurrency = "EUR",
                 destinationCurrency = "USD",
                 originAmount = 100.0,
-                destinationAmount = 120.0
+                destinationAmount = 120.0,
+                fee = 0.1
             )
         )
 
@@ -61,12 +63,14 @@ class RoomDatabaseBehaviorSpec {
                 originCurrency = "USD",
                 destinationCurrency = "EUR",
                 originAmount = 120.0,
-                destinationAmount = 100.0
+                destinationAmount = 100.0,
+                fee = 0.1
             )
         )
 
         balances.test {
-            assertEquals(awaitItem().size, 3)
+            val awaitItem = awaitItem()
+            assertEquals(awaitItem.size, 3)
         }
 
     }
@@ -75,13 +79,13 @@ class RoomDatabaseBehaviorSpec {
     fun ensureInsertIntoExchangeDataSourceWorksProperly() = runTest {
         val currencyExchangeLocalDataSourceImpl = CurrencyExchangeLocalDataSourceImpl(database)
 
-
         currencyExchangeLocalDataSourceImpl.addTransaction(
             TransactionEntity(
                 originCurrency = "EUR",
                 destinationCurrency = "EUR",
                 originAmount = 0.0,
-                destinationAmount = 1000.0
+                destinationAmount = 1000.0,
+                fee = 0.0
             )
         )
 
@@ -90,7 +94,8 @@ class RoomDatabaseBehaviorSpec {
                 originCurrency = "EUR",
                 destinationCurrency = "USD",
                 originAmount = 100.0,
-                destinationAmount = 120.0
+                destinationAmount = 120.0,
+                fee = 0.1
             )
         )
 
@@ -98,8 +103,9 @@ class RoomDatabaseBehaviorSpec {
             TransactionEntity(
                 originCurrency = "USD",
                 destinationCurrency = "EUR",
-                originAmount = 120.0,
-                destinationAmount = 100.0
+                originAmount = 108.0,
+                destinationAmount = 90.0,
+                fee = 0.0
             )
         )
 
@@ -108,7 +114,7 @@ class RoomDatabaseBehaviorSpec {
         balanceList.test {
             val awaitItem = awaitItem()
             assertEquals(2, awaitItem.size)
-            assertEquals(1000.0, awaitItem.first { it.currencyId == "EUR" }.amount)
+            assertEquals(980.0, awaitItem.first { it.currencyId == "EUR" }.amount)
             assertEquals(0.0, awaitItem.first { it.currencyId == "USD" }.amount)
         }
     }

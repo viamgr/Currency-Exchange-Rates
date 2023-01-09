@@ -17,6 +17,10 @@ dependencies {
     testImplementation(Modules.CommonTestShared)
 
     testImplementation(Libraries.Test.turbine)
+    testImplementation(Libraries.Presentation.orbitMviTest, dependencyConfiguration = {
+        exclude("org.jetbrains.kotlin")
+        exclude("org.jetbrains.kotlinx")
+    })
 
     api(Modules.CommonPresentation, Modules.DomainGateway)
 

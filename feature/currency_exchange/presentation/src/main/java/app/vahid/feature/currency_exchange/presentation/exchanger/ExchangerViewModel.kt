@@ -47,8 +47,8 @@ class ExchangerViewModel @Inject constructor(
         dispatchIntent(Init)
     }
 
-    override suspend fun handleIntent(intent: ExchangerIntent): Flow<ExchangerEvent> =
-        when (intent) {
+    override suspend fun handleIntent(intent: ExchangerIntent): Flow<ExchangerEvent> {
+        return when (intent) {
             Init -> handleInit()
             is ExchangerIntent.OnOriginCurrencyUpdated -> onOriginCurrencyUpdatedEffect(intent.currencyId)
             is ExchangerIntent.OnDestinationCurrencyUpdated -> onDestinationCurrencyUpdatedEffect(
@@ -56,6 +56,7 @@ class ExchangerViewModel @Inject constructor(
             is ExchangerIntent.OnOriginValueUpdated -> onOriginValueUpdatedEffect(intent.amount)
             ExchangerIntent.OnSubmitClicked -> onSubmitClickedEffect()
         }
+    }
 
     private fun onSubmitClickedEffect(): Flow<ExchangerEvent> = flow {
         merge(applyLoadingEffect(true), applyExchangeCurrencyEffect())

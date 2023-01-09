@@ -2,6 +2,7 @@ package app.vahid.feature.currency_exchange.presentation.entry_list
 
 import app.cash.turbine.test
 import app.vahid.common.core.WrappedResult
+import app.vahid.common.presentation.dispatchIntent
 import app.vahid.domain.gateway.model.CurrencyRate
 import app.vahid.domain.use_case.ExchangeCurrencyUseCase
 import app.vahid.domain.use_case.GetCurrencyRateListUseCase
@@ -9,6 +10,7 @@ import app.vahid.domain.use_case.GetCurrencyRatioUseCase
 import app.vahid.domain.use_case.GetMyBalanceListUseCase
 import app.vahid.domain.use_case.UpdateCurrencyRateListUseCase
 import app.vahid.feature.currency_exchange.presentation.exchanger.ExchangerViewModel
+import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerIntent
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerReducer
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerState
 import io.kotest.core.spec.IsolationMode
@@ -19,13 +21,15 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
+import org.orbitmvi.orbit.test
 
 class ExchangerViewModelBehaviorSpec : BehaviorSpec() {
 
     override fun isolationMode(): IsolationMode = IsolationMode.InstancePerTest
 
     init {
-        Given("mock exchanger view model instance") {
+        Given("mocked exchanger view model dependencies") {
+
             val exchangeCurrencyUseCase = mockk<ExchangeCurrencyUseCase>()
             val getCurrencyRatioUseCase = mockk<GetCurrencyRatioUseCase>()
             val getMyBalanceListUseCase = mockk<GetMyBalanceListUseCase>()
@@ -33,7 +37,7 @@ class ExchangerViewModelBehaviorSpec : BehaviorSpec() {
             val updateCurrencyRateListUseCase = mockk<UpdateCurrencyRateListUseCase>()
             val reducer = ExchangerReducer()
 
-            When("initiate the exchanger view model") {
+            When("initiate the exchanger view model with empty data") {
 
                 val initialSate = ExchangerState()
                 coEvery { getCurrencyRatioUseCase(any()) } returns emptyFlow()
@@ -96,6 +100,66 @@ class ExchangerViewModelBehaviorSpec : BehaviorSpec() {
 
             }
 
+
+            When("dispatch an OnOriginCurrencyUpdated intent") {
+
+                val initialSate = ExchangerState()
+                coEvery { getCurrencyRatioUseCase(any()) } returns emptyFlow()
+                coEvery { getMyBalanceListUseCase(Unit) } returns emptyFlow()
+                every { getCurrencyRateListUseCase(Unit) } returns flowOf(emptyList())
+                coEvery { updateCurrencyRateListUseCase(Unit) } returns WrappedResult.success(Unit)
+
+                val viewModel = ExchangerViewModel(
+                    exchangeCurrencyUseCase = exchangeCurrencyUseCase,
+                    getCurrencyRatioUseCase = getCurrencyRatioUseCase,
+                    getMyBalanceListUseCase = getMyBalanceListUseCase,
+                    getCurrencyRateListUseCase = getCurrencyRateListUseCase,
+                    updateCurrencyRateListUseCase = updateCurrencyRateListUseCase,
+                    reducer = reducer,
+                )
+
+                val testSubject = viewModel.test()
+                testSubject.testIntent {
+                    viewModel.dispatchIntent(ExchangerIntent.OnOriginCurrencyUpdated("EUR"))
+                }
+
+                testSubject.assert(initialSate) {
+                    states(
+                        { initialSate },
+                        { copy(selectedOriginCurrency = "EUR") },
+                    )
+                }
+            }
+
+            When("dispatch an OnDestinationCurrencyUpdated intent") {
+
+                val initialSate = ExchangerState()
+                coEvery { getCurrencyRatioUseCase(any()) } returns emptyFlow()
+                coEvery { getMyBalanceListUseCase(Unit) } returns emptyFlow()
+                every { getCurrencyRateListUseCase(Unit) } returns flowOf(emptyList())
+                coEvery { updateCurrencyRateListUseCase(Unit) } returns WrappedResult.success(Unit)
+
+                val viewModel = ExchangerViewModel(
+                    exchangeCurrencyUseCase = exchangeCurrencyUseCase,
+                    getCurrencyRatioUseCase = getCurrencyRatioUseCase,
+                    getMyBalanceListUseCase = getMyBalanceListUseCase,
+                    getCurrencyRateListUseCase = getCurrencyRateListUseCase,
+                    updateCurrencyRateListUseCase = updateCurrencyRateListUseCase,
+                    reducer = reducer,
+                )
+
+                val testSubject = viewModel.test()
+                testSubject.testIntent {
+                    viewModel.dispatchIntent(ExchangerIntent.OnDestinationCurrencyUpdated("EUR"))
+                }
+
+                testSubject.assert(initialSate) {
+                    states(
+                        { initialSate },
+                        { copy(selectedOriginCurrency = "EUR") },
+                    )
+                }
+            }
         }
 
     }

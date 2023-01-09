@@ -71,7 +71,6 @@ dependencies {
         Modules.Repository,
         Modules.DatasourceRemote,
         Modules.DatasourceCache,
-        Modules.DatasourceCache,
     )
 
     androidTestImplementation(Modules.BaseUiAndroidTestShared)

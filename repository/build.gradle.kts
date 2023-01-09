@@ -10,9 +10,12 @@ plugins {
 dependencies {
     implementation(Modules.CommonCore, Modules.DomainGateway)
 
+    kapt(
+        Libraries.Common.hiltCompiler,
+    )
+
     implementation(
         Libraries.Common.hiltAndroid,
-        Libraries.Common.hiltCompiler,
         Libraries.Cache.roomPaging,
     )
 }

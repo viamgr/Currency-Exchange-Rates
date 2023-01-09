@@ -9,6 +9,5 @@ sealed interface ExchangerSideEffect : SideEffect, ExchangerEvent {
         val originCurrency: String,
         val destinationCurrency: String,
         val destinationAmount: BigDecimal,
-        val fee: Double,
     ) : ExchangerSideEffect
 }

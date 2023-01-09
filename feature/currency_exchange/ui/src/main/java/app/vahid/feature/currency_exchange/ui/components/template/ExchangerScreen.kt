@@ -55,7 +55,7 @@ fun ExchangerScreen(
             viewModel.dispatchIntent(ExchangerIntent.OnDestinationCurrencyUpdated(it))
         },
         onOriginCurrencyChanged = {
-            viewModel.dispatchIntent(ExchangerIntent.OnOriginValueUpdated(it))
+            viewModel.dispatchIntent(ExchangerIntent.OnOriginCurrencyUpdated(it))
         }
     )
 }
@@ -79,6 +79,7 @@ fun ExchangerScreen(
         selectedOriginCurrency = selectedOriginCurrency,
         selectedDestinationCurrency = selectedDestinationCurrency,
         destinationAmount = destinationAmount,
+        isSubmitButtonEnabled = isSubmitButtonEnabled,
         onSubmitClicked = onSubmitClicked,
         onOriginAmountChanged = onOriginAmountChanged,
         onDestinationCurrencyChanged = onDestinationCurrencyChanged,
@@ -97,6 +98,7 @@ fun ExchangerScreen(
     selectedOriginCurrency: String = "",
     selectedDestinationCurrency: String = "",
     destinationAmount: BigDecimal = BigDecimal.ZERO,
+    isSubmitButtonEnabled: Boolean,
     onSubmitClicked: () -> Unit,
     onOriginAmountChanged: (value: String) -> Unit,
     onDestinationCurrencyChanged: (String) -> Unit,
@@ -141,16 +143,18 @@ fun ExchangerScreen(
         }
 
         item {
-            SubmitButton(onSubmitClicked)
+            SubmitButton(isSubmitButtonEnabled, onSubmitClicked)
         }
 
     }
 }
 
 @Composable
-fun SubmitButton(onSubmitClicked: () -> Unit) {
+fun SubmitButton(isSubmitButtonEnabled: Boolean, onSubmitClicked: () -> Unit) {
 
-    Button(onClick = onSubmitClicked) {
+    Button(
+        onClick = onSubmitClicked,
+        enabled = isSubmitButtonEnabled) {
         Text(text = "Submit")
     }
 }

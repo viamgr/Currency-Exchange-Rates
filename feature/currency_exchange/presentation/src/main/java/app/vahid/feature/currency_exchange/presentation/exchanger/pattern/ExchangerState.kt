@@ -12,6 +12,7 @@ data class ExchangerState(
     val destinationRateList: List<String> = emptyList(),
     val originRateList: List<String> = emptyList(),
     val originAmount: BigDecimal = BigDecimal.ZERO,
+    val isSubmitButtonEnabled: Boolean = true,
     val selectedOriginCurrency: String = "",
     val selectedDestinationCurrency: String = "",
     val destinationAmount: BigDecimal = BigDecimal.ZERO,

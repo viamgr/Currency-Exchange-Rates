@@ -12,6 +12,7 @@ import app.vahid.common.presentation.error_handling.cacheErrors
 import app.vahid.domain.use_case.ExchangeCurrencyUseCase
 import app.vahid.domain.use_case.GetCurrencyRateListUseCase
 import app.vahid.domain.use_case.GetCurrencyRatioUseCase
+import app.vahid.domain.use_case.GetFeeUseCase
 import app.vahid.domain.use_case.GetMyBalanceListUseCase
 import app.vahid.domain.use_case.UpdateCurrencyRateListUseCase
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerEffect
@@ -43,6 +44,7 @@ class ExchangerViewModel @Inject constructor(
     private val getMyBalanceListUseCase: GetMyBalanceListUseCase,
     private val getCurrencyRateListUseCase: GetCurrencyRateListUseCase,
     private val updateCurrencyRateListUseCase: UpdateCurrencyRateListUseCase,
+    private val getFeeUseCase: GetFeeUseCase,
     override val reducer: ExchangerReducer = ExchangerReducer(),
 ) : BaseViewModel<ExchangerIntent, ExchangerState, ExchangerEffect, ExchangerSideEffect,
         ExchangerEvent>(ExchangerState()) {
@@ -103,7 +105,6 @@ class ExchangerViewModel @Inject constructor(
                     originCurrency = selectedOriginCurrency,
                     destinationAmount = destinationAmount,
                     destinationCurrency = selectedDestinationCurrency,
-                    fee = 0.0
                 )
 
             )
@@ -130,10 +131,22 @@ class ExchangerViewModel @Inject constructor(
         listOf(ExchangerEffect.OnLoadingStateChanged(state)).asFlow()
 
     private fun onOriginValueUpdatedEffect(amount: String): Flow<ExchangerEvent> = flow {
-        amount.runCatching {
-            toBigDecimal()
-        }.onSuccess {
-            emit(ExchangerEffect.OnUpdateOriginValue(it))
+        getFeeUseCase(Unit).collect { fee: Double ->
+            amount.runCatching {
+                toBigDecimal()
+            }.onSuccess {
+                with(container.stateFlow.value) {
+                    val balanceOfCurrency =
+                        balanceList.first { selectedOriginCurrency == it.currencyId }.amount
+                    val hasEnoughBalance =
+                        it <= balanceOfCurrency - (fee.toBigDecimal() * balanceOfCurrency)
+                    emit(ExchangerEffect.OnUpdateOriginValue(it,
+                        hasEnoughBalance))
+
+                }
+
+            }
+
         }
     }
 
@@ -180,10 +193,9 @@ class ExchangerViewModel @Inject constructor(
     private fun getMyBalanceListEffect(): Flow<ExchangerEvent> {
         return getMyBalanceListUseCase(Unit)
             .flatMapConcat { balances ->
-                val currencyList = balances.map { it.currencyId }
                 listOf(
                     ExchangerEffect.OnUpdateSelectedOrigin(balances.first().currencyId),
-                    ExchangerEffect.OnUpdateOriginRateList(currencyList),
+                    ExchangerEffect.OnUpdateOriginRateList(balances.map { it.currencyId }),
                     ExchangerEffect.OnUpdateMyBalances(balances)
                 ).asFlow()
             }

@@ -3,6 +3,7 @@
 package app.vahid.feature.currency_exchange.presentation.exchanger
 
 import app.vahid.common.core.fold
+import app.vahid.common.core.onFailure
 import app.vahid.common.presentation.BaseViewModel
 import app.vahid.common.presentation.dispatchIntent
 import app.vahid.common.presentation.error_handling.UiErrorType
@@ -11,6 +12,7 @@ import app.vahid.domain.use_case.ExchangeCurrencyUseCase
 import app.vahid.domain.use_case.GetCurrencyRateListUseCase
 import app.vahid.domain.use_case.GetCurrencyRatioUseCase
 import app.vahid.domain.use_case.GetMyBalanceListUseCase
+import app.vahid.domain.use_case.UpdateCurrencyRateListUseCase
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerEffect
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerEvent
 import app.vahid.feature.currency_exchange.presentation.exchanger.pattern.ExchangerIntent
@@ -22,6 +24,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -35,6 +38,7 @@ class ExchangerViewModel @Inject constructor(
     private val getCurrencyRatioUseCase: GetCurrencyRatioUseCase,
     private val getMyBalanceListUseCase: GetMyBalanceListUseCase,
     private val getCurrencyRateListUseCase: GetCurrencyRateListUseCase,
+    private val updateCurrencyRateListUseCase: UpdateCurrencyRateListUseCase,
     override val reducer: ExchangerReducer = ExchangerReducer(),
 ) : BaseViewModel<ExchangerIntent, ExchangerState, ExchangerEffect, ExchangerSideEffect,
         ExchangerEvent>(ExchangerState()) {
@@ -54,6 +58,10 @@ class ExchangerViewModel @Inject constructor(
         }
 
     private fun onSubmitClickedEffect(): Flow<ExchangerEvent> = flow {
+        merge(applyLoadingEffect(true), applyExchangeCurrencyEffect())
+    }
+
+    private fun applyExchangeCurrencyEffect() = flow {
         exchangeCurrency()
             .cacheErrors()
             .fold(
@@ -122,10 +130,17 @@ class ExchangerViewModel @Inject constructor(
 
     private fun handleInit(): Flow<ExchangerEvent> {
         return merge(
+            updateCurrencyRateListEffect(),
             getRateListEffect(),
             getMyBalanceListEffect(),
             getDestinationAmountEffect()
         )
+    }
+
+    private fun updateCurrencyRateListEffect(): Flow<ExchangerEvent> = flow {
+        updateCurrencyRateListUseCase(Unit).onFailure { errorType: UiErrorType, _ ->
+            emitAll(applyFailedEffect(errorType))
+        }
     }
 
     private fun getDestinationAmountEffect(): Flow<ExchangerEvent> {
@@ -147,16 +162,17 @@ class ExchangerViewModel @Inject constructor(
     private fun getMyBalanceListEffect(): Flow<ExchangerEvent> {
         return getMyBalanceListUseCase(Unit)
             .flatMapConcat { balances ->
+                val currencyList = balances.map { it.currencyId }
                 listOf(
-                    ExchangerEffect.OnUpdateOriginRateList(balances.map { it.currencyId }),
-                    ExchangerEffect.OnUpdateMyBalances(balances)
+                    ExchangerEffect.OnUpdateOriginRateList(currencyList),
+                    ExchangerEffect.OnUpdateMyBalances(currencyList)
                 ).asFlow()
             }
     }
 
     private fun getRateListEffect(): Flow<ExchangerEvent> {
         return getCurrencyRateListUseCase(Unit).map { rates ->
-            ExchangerEffect.OnUpdateOriginRateList(
+            ExchangerEffect.OnUpdateDestinationRateList(
                 rates.map { it.currencyId })
         }
     }

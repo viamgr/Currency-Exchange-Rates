@@ -13,7 +13,11 @@ plugins {
 dependencies {
 
     implementation(Modules.CommonCore, Modules.DomainUseCase)
+
     testImplementation(Modules.CommonTestShared)
+
+    testImplementation(Libraries.Test.turbine)
+
     api(Modules.CommonPresentation, Modules.DomainGateway)
 
     kapt(Libraries.Common.hiltCompiler)

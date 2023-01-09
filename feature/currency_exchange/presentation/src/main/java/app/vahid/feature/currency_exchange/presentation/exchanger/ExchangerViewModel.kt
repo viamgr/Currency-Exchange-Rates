@@ -27,7 +27,9 @@ class ExchangerViewModel @Inject constructor(
     override suspend fun handleIntent(intent: ExchangerIntent): Flow<ExchangerEvent> =
         when (intent) {
             Init -> handleInit()
-
+            ExchangerIntent.OnSelectOriginCurrency -> TODO()
+            ExchangerIntent.OnSubmitClicked -> TODO()
+            is ExchangerIntent.OnUpdateValue -> TODO()
         }
 
     private fun handleInit(): Flow<ExchangerEvent> {

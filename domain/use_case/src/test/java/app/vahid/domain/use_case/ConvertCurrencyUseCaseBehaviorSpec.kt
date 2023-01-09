@@ -55,7 +55,7 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
                 GetCurrencyRatioUseCase.Request(
                     originCurrency = originCurrencyId,
                     destinationCurrency = destinationCurrencyId,
-                    amount = inputAmount
+                    originAmount = inputAmount
                 )
 
             And("convert currency $actualRequest") {

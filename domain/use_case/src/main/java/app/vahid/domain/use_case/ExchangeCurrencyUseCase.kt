@@ -7,17 +7,26 @@ import app.vahid.common.usecase_common.SuspendUseCase
 import app.vahid.domain.gateway.model.Transaction
 import app.vahid.domain.gateway.repository.CurrencyExchangeRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class ExchangeCurrencyUseCase @Inject constructor(
     private val currencyExchangeRepository: CurrencyExchangeRepository,
     private val addTransactionUseCase: AddTransactionUseCase,
+    private val getCurrencyRatioUseCase: GetCurrencyRatioUseCase,
     @IoDispatcher ioDispatcher: CoroutineDispatcher,
 ) : SuspendUseCase<ExchangeCurrencyUseCase.Request, WrappedResult<Unit>>(ioDispatcher) {
     override suspend fun execute(parameter: Request): WrappedResult<Unit> {
+        val destinationAmount = getCurrencyRatioUseCase(
+            GetCurrencyRatioUseCase.Request(parameter.originCurrency,
+                parameter.destinationCurrency,
+                parameter.originAmount
+            )
+        ).first()
+
         return currencyExchangeRepository
             .exchangeCurrency(
-                parameter.amount,
+                parameter.originAmount,
                 parameter.originCurrency,
                 parameter.destinationCurrency
             )
@@ -26,7 +35,8 @@ class ExchangeCurrencyUseCase @Inject constructor(
                     Transaction(
                         originCurrency = parameter.originCurrency,
                         destinationCurrency = parameter.destinationCurrency,
-                        amount = parameter.amount
+                        originAmount = parameter.originAmount,
+                        destinationAmount = destinationAmount
                     )
                 )
             }
@@ -35,6 +45,6 @@ class ExchangeCurrencyUseCase @Inject constructor(
     data class Request(
         val originCurrency: String,
         val destinationCurrency: String,
-        val amount: Double,
+        val originAmount: Double,
     )
 }

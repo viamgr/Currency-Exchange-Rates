@@ -1,7 +1,6 @@
-package app.vahid.domain.gateway.model
+package app.vahid.repository.model
 
-
-data class Transaction(
+data class TransactionEntity(
     val originCurrency: String,
     val destinationCurrency: String,
     val originAmount: Double,

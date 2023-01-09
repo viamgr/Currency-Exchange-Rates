@@ -10,6 +10,7 @@ import app.vahid.repository.datasource.CurrencyExchangeLocalDataSource
 import app.vahid.repository.datasource.CurrencyExchangeRemoteDataSource
 import app.vahid.repository.mapper.BalanceMapper
 import app.vahid.repository.mapper.CurrencyRateMapper
+import app.vahid.repository.mapper.TransactionMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -19,6 +20,7 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
     private val currencyExchangeRemoteDataSource: CurrencyExchangeRemoteDataSource,
     private val balanceMapper: BalanceMapper,
     private val currencyRateMapper: CurrencyRateMapper,
+    private val transactionMapper: TransactionMapper,
 ) : CurrencyExchangeRepository {
 
     override fun getBaseCurrency(): Flow<String> {
@@ -40,6 +42,7 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
                 currencyExchangeLocalDataSource.addCurrencyRateList(
                     currencyRates.rates
                 )
+                currencyExchangeLocalDataSource.setBaseCurrency(currencyRates.base)
             }
     }
 
@@ -78,7 +81,10 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addTransaction(transaction: Transaction): WrappedResult<Unit> {
-        return currencyExchangeLocalDataSource.addTransaction(transaction = transaction)
+        return currencyExchangeLocalDataSource
+            .addTransaction(
+                transaction = transactionMapper(transaction)
+            )
     }
 
 }

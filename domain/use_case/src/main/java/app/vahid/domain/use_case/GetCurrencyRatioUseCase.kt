@@ -23,7 +23,7 @@ class GetCurrencyRatioUseCase @Inject constructor(
                         ExchangeCalculatorUseCase.Request(
                             originCurrencyRate = response.originCurrencyRate,
                             destinationCurrencyRate = response.baseCurrencyRate,
-                            amount = parameter.amount
+                            amount = parameter.originAmount
                         )
                     )
 
@@ -41,7 +41,7 @@ class GetCurrencyRatioUseCase @Inject constructor(
     data class Request(
         val originCurrency: String,
         val destinationCurrency: String,
-        val amount: Double,
+        val originAmount: Double,
     )
 
 }

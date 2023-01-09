@@ -19,7 +19,18 @@ dependencies {
 
     kapt(Libraries.Cache.roomCompiler, Libraries.Common.hiltCompiler)
 
+    androidTestImplementation(
+        Libraries.Test.junitTest,
+        Libraries.Test.junitTest,
+        Libraries.Test.testRunner,
+        Libraries.Test.coroutinesTest,
+        Libraries.Test.kotlinReflect,
+        Libraries.Test.turbine,
+    )
+
     implementation(
+        Libraries.Common.coroutineAndroid,
+        Libraries.Common.coroutineCore,
         Libraries.Common.hiltAndroid,
         Libraries.Cache.roomRuntime,
         Libraries.Cache.room,

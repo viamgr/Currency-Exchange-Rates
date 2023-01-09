@@ -29,7 +29,7 @@ class ExchangerViewModel @Inject constructor(
             Init -> handleInit()
             ExchangerIntent.OnSelectOriginCurrency -> TODO()
             ExchangerIntent.OnSubmitClicked -> TODO()
-            is ExchangerIntent.OnUpdateValue -> TODO()
+            is ExchangerIntent.OnOriginValueUpdated -> TODO()
         }
 
     private fun handleInit(): Flow<ExchangerEvent> {

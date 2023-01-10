@@ -6,6 +6,7 @@ import app.vahid.common.core.requireThrowable
 import app.vahid.repository.datasource.CurrencyExchangeRemoteDataSource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +29,7 @@ class RemoteApiInstrumentedTest {
     }
 
     @Test
-    fun checkNetworkRequestIsWorkingProperly() {
+    fun checkNetworkRequestIsWorkingProperly() = runBlocking {
         val activityScenario = ActivityScenario.launch(MainActivity::class.java)
 
         val items = currencyExchangeRemoteDataSource.getCurrencyRateList()

@@ -42,8 +42,8 @@ class RoomDatabaseBehaviorSpec {
             CachedTransaction(
                 originCurrency = "EUR",
                 destinationCurrency = "EUR",
-                originAmount = 0.0,
-                destinationAmount = 1000.0,
+                originAmount = 0.0.toBigDecimal(),
+                destinationAmount = 1000.0.toBigDecimal(),
                 fee = 0.1
             )
         )
@@ -52,8 +52,8 @@ class RoomDatabaseBehaviorSpec {
             CachedTransaction(
                 originCurrency = "EUR",
                 destinationCurrency = "USD",
-                originAmount = 100.0,
-                destinationAmount = 120.0,
+                originAmount = 100.0.toBigDecimal(),
+                destinationAmount = 120.0.toBigDecimal(),
                 fee = 0.1
             )
         )
@@ -62,8 +62,8 @@ class RoomDatabaseBehaviorSpec {
             CachedTransaction(
                 originCurrency = "USD",
                 destinationCurrency = "EUR",
-                originAmount = 120.0,
-                destinationAmount = 100.0,
+                originAmount = 120.0.toBigDecimal(),
+                destinationAmount = 100.0.toBigDecimal(),
                 fee = 0.1
             )
         )
@@ -83,8 +83,8 @@ class RoomDatabaseBehaviorSpec {
             TransactionEntity(
                 originCurrency = "EUR",
                 destinationCurrency = "EUR",
-                originAmount = 0.0,
-                destinationAmount = 1000.0,
+                originAmount = 0.0.toBigDecimal(),
+                destinationAmount = 1000.0.toBigDecimal(),
                 fee = 0.0
             )
         )
@@ -93,8 +93,8 @@ class RoomDatabaseBehaviorSpec {
             TransactionEntity(
                 originCurrency = "EUR",
                 destinationCurrency = "USD",
-                originAmount = 100.0,
-                destinationAmount = 120.0,
+                originAmount = 100.0.toBigDecimal(),
+                destinationAmount = 120.0.toBigDecimal(),
                 fee = 0.1
             )
         )
@@ -103,8 +103,8 @@ class RoomDatabaseBehaviorSpec {
             TransactionEntity(
                 originCurrency = "USD",
                 destinationCurrency = "EUR",
-                originAmount = 108.0,
-                destinationAmount = 90.0,
+                originAmount = 108.0.toBigDecimal(),
+                destinationAmount = 90.0.toBigDecimal(),
                 fee = 0.0
             )
         )
@@ -114,8 +114,8 @@ class RoomDatabaseBehaviorSpec {
         balanceList.test {
             val awaitItem = awaitItem()
             assertEquals(2, awaitItem.size)
-            assertEquals(980.0, awaitItem.first { it.currencyId == "EUR" }.amount)
-            assertEquals(0.0, awaitItem.first { it.currencyId == "USD" }.amount)
+            assertEquals("980.00", awaitItem.first { it.currencyId == "EUR" }.amount.toString())
+            assertEquals("0.00", awaitItem.first { it.currencyId == "USD" }.amount.toString())
         }
     }
 

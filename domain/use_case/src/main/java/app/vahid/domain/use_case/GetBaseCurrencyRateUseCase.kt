@@ -6,6 +6,7 @@ import app.vahid.domain.gateway.repository.CurrencyExchangeRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
 import javax.inject.Inject
 
@@ -17,6 +18,7 @@ class GetBaseCurrencyRateUseCase @Inject constructor(
     FlowUseCase<Unit, Double>(ioDispatcher) {
     override fun execute(parameter: Unit): Flow<Double> {
         return currencyExchangeRepository.getBaseCurrency()
+            .filterNotNull()
             .flatMapConcat {
                 currencyExchangeRepository.getCurrencyRate(it)
             }

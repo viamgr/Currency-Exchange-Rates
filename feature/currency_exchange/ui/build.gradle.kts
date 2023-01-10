@@ -21,6 +21,14 @@ android {
 dependencies {
     androidTestImplementation(Modules.BaseUiAndroidTestShared)
 
+    androidTestImplementation(
+        Libraries.Test.junitTest,
+        Libraries.Ui.mockkAndroid,
+        Libraries.Test.mockkJvm,
+        Libraries.Ui.composeUiTestJunit4,
+        Libraries.Ui.composeUiTestManifest,
+    )
+
     implementation(
         Modules.DomainUseCase,
         Modules.FeatureCurrencyExchangePresentation,
@@ -31,7 +39,6 @@ dependencies {
     kapt(Libraries.Common.hiltCompiler)
 
     implementation(
-        Libraries.Ui.orbitCompose,
         Libraries.Ui.composeMaterial,
         Libraries.Common.coroutineAndroid,
         Libraries.Common.hiltAndroid,
@@ -40,4 +47,5 @@ dependencies {
         Libraries.Ui.composePaging,
         Libraries.Ui.lifecycleRuntime,
         Libraries.Ui.composeUiTestManifest)
+
 }

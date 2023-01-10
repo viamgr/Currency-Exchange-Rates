@@ -27,9 +27,14 @@ dependencies {
         Libraries.Ui.composeMaterial,
         Libraries.Ui.coil,
         Libraries.Ui.composeNavigation,
-        Libraries.Ui.orbitCompose,
         Libraries.Ui.composeFoundation,
         Libraries.Ui.composeFoundationLayout,
         Libraries.Ui.composeUi,
     )
+
+
+    api(Libraries.Ui.orbitCompose, dependencyConfiguration = {
+        exclude("org.jetbrains.kotlin")
+        exclude("org.jetbrains.kotlinx")
+    })
 }

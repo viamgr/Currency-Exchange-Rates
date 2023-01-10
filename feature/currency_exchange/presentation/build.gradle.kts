@@ -28,7 +28,12 @@ dependencies {
 
     implementation(
         Libraries.Common.hiltAndroid,
-        Libraries.Presentation.orbitViewmodel,
     )
+
+    implementation(Libraries.Presentation.orbitViewmodel, dependencyConfiguration = {
+        exclude("org.jetbrains.kotlin")
+        exclude("org.jetbrains.kotlinx")
+    })
+
 }
 

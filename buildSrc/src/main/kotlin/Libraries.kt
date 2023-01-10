@@ -3,7 +3,6 @@ object Libraries {
     object Test {
         const val coroutinesTest =
             "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesAndroidVersion"
-        const val junit5 = "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion"
         const val turbine = "app.cash.turbine:turbine:$turbineVersion"
         const val kotestRunner = "io.kotest:kotest-runner-junit5-jvm:$kotestJUnitVersion"
         const val kotestAssertions =
@@ -16,7 +15,6 @@ object Libraries {
         const val mockkJvm = "io.mockk:mockk-agent-jvm:$mockkVersion"
         const val mockk = "io.mockk:mockk:$mockkVersion"
         const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-        const val junitJupiter = "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 
     }
 

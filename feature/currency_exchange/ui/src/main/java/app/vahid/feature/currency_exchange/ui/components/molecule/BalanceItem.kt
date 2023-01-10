@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import app.vahid.base_ui.common.utils.formatPrice
 import app.vahid.base_ui.theme.Theme
 import app.vahid.domain.gateway.model.Balance
@@ -16,6 +17,7 @@ fun BalanceItem(
     it: Balance,
 ) {
     Row(modifier = Modifier
+        .testTag("BalanceItem_${it.currencyId}")
         .clickable {
             onClick(it.currencyId)
         }

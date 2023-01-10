@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.vahid.base_ui.common.components.atom.HeaderLabel
@@ -129,6 +130,7 @@ fun ExchangerScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .testTag("ExchangerScreenItems")
         ) {
 
             errorType?.let {

@@ -27,8 +27,7 @@ object MessageDialog {
 
 }
 
-fun NavGraphBuilder.addCommonGraph(
-) {
+fun NavGraphBuilder.addCommonGraph(onDialogDismissClicked: () -> Unit) {
     dialog(
         route = MessageDialog.route,
         arguments = MessageDialog.navArguments,
@@ -39,6 +38,6 @@ fun NavGraphBuilder.addCommonGraph(
             }
             .orEmpty()
 
-        MessageDialogScreen(message = message)
+        MessageDialogScreen(message = message, onDismissClicked = onDialogDismissClicked)
     }
 }

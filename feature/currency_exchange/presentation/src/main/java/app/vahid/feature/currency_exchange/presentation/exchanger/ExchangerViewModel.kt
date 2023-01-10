@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.inject.Inject
 
 @HiltViewModel
@@ -84,7 +85,7 @@ class ExchangerViewModel @Inject constructor(
             .cacheErrors()
             .fold(
                 onSuccess = {
-                    applyLoadingEffect(false)
+                    applySuccessfulEffect()
                 },
                 onFailure = { errorType: UiErrorType, _ ->
                     applyFailedEffect(errorType)
@@ -138,7 +139,8 @@ class ExchangerViewModel @Inject constructor(
                     val balanceOfCurrency = it.amount
                     val hasEnoughBalance =
                         originAmount <= balanceOfCurrency - (fee.toBigDecimal() * balanceOfCurrency)
-                    emit(ExchangerEffect.OnUpdateSubmitButtonState(hasEnoughBalance))
+                    val buttonEnabled = hasEnoughBalance && originAmount > BigDecimal.ZERO
+                    emit(ExchangerEffect.OnUpdateSubmitButtonState(buttonEnabled))
                     emit(ExchangerEffect.OnUpdateFeeValue(fee))
                 }
             }

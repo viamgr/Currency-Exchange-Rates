@@ -76,8 +76,8 @@ val typographyValues: TypographyValues
             bodyLarge = bodyLarge.copy(color = Theme.colorScheme.primary),
             button = bodyLarge.copy(
                 color = Theme.colorScheme.primaryBg
-            )
-
+            ),
+            confirm = bodyMedium.copy(color = Theme.colorScheme.secondary)
         )
     }
 

@@ -25,7 +25,9 @@ fun AppNavigator(
                 navController.navigate(MessageDialog.createRoute(it))
             }
 
-            addCommonGraph()
+            addCommonGraph {
+                navController.navigateUp()
+            }
         }
     }
 

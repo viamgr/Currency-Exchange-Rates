@@ -9,6 +9,7 @@ data class ColorValues(
     val warning: Color = Color(0XFFFFFFFF),
     val secondary: Color = Color(0xFF0589CA),
     val primaryBg: Color = Color(0XFFFFFFFF),
+    val messageCardBg: Color = Color(0XFFDBDFE1),
     val toolbarText: Color = Color(0xFFFFFFFF),
     val toolbarBg: Color = secondary,
     val buttonBg: Color = secondary,

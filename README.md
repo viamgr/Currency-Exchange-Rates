@@ -7,6 +7,11 @@
 This is an Implementation of a native android project with a flexible and maintainable architectural
 design using Clean architecture for a `Currency Rate Exchanger` application.
 
+**Screen shots**
+
+![Main Screen](screenshot/main_screen.png)
+![Dialog Screen](screenshot/dialog_screen.png)
+
 ### Key Features:
 
 - 100% Kotlin

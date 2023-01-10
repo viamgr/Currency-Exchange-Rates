@@ -27,6 +27,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
@@ -34,8 +35,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -55,14 +58,14 @@ class ExchangerViewModel @Inject constructor(
     init {
         dispatchIntent(Init)
         viewModelScope.launch {
-            container.stateFlow.collect {
+            /*container.stateFlow.collect {
                 getCurrencyRatioUseCase(
                     GetCurrencyRatioUseCase.Request(
                         originCurrency = it.selectedOriginCurrency,
                         destinationCurrency = it.selectedDestinationCurrency,
                         originAmount = it.originAmount)
                 )
-            }
+            }*/
         }
     }
 
@@ -190,16 +193,26 @@ class ExchangerViewModel @Inject constructor(
         }
     }
 
-    private fun getDestinationAmountEffect(): Flow<ExchangerEvent> {
-        return container
-            .stateFlow
-            .filter { it.selectedOriginCurrency.isNotEmpty() && it.selectedDestinationCurrency.isNotEmpty() }
-            .flatMapConcat {
-                getCurrencyRatioUseCase.flow
-            }
+    private fun getDestinationAmountEffect(): Flow<ExchangerEvent> = channelFlow {
+        getCurrencyRatioUseCase.flow
             .map {
                 ExchangerEffect.OnUpdateDestinationValue(it)
             }
+            .onEach {
+                send(it)
+            }
+            .launchIn(this)
+
+        container.stateFlow.onEach {
+            getCurrencyRatioUseCase(
+                params = GetCurrencyRatioUseCase.Request(
+                    originCurrency = it.selectedOriginCurrency,
+                    destinationCurrency = it.selectedDestinationCurrency,
+                    originAmount = it.originAmount
+                )
+            )
+        }
+            .launchIn(this)
     }
 
     private fun getMyBalanceListEffect(): Flow<ExchangerEvent> {

@@ -6,11 +6,11 @@ import java.math.BigDecimal
 
 interface CurrencyExchangeRemoteDataSource {
 
-    fun exchangeCurrency(
+    suspend fun exchangeCurrency(
         amount: BigDecimal,
         currencyId: String,
         baseCurrencyId: String,
     ): WrappedResult<Unit>
 
-    fun getCurrencyRateList(): WrappedResult<CurrencyRateListEntity>
+    suspend fun getCurrencyRateList(): WrappedResult<CurrencyRateListEntity>
 }

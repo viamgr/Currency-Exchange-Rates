@@ -1,7 +1,9 @@
 package app.vahid.domain.use_case
 
+import app.vahid.common.core.IoDispatcher
 import app.vahid.common.usecase_common.FlowUseCase
 import app.vahid.domain.gateway.repository.CurrencyExchangeRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -13,8 +15,9 @@ import javax.inject.Inject
 class GetExchangeRatesUseCase @Inject constructor(
     private val currencyExchangeRepository: CurrencyExchangeRepository,
     private val getBaseCurrencyRateUseCase: GetBaseCurrencyRateUseCase,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) :
-    FlowUseCase<GetExchangeRatesUseCase.Request, GetExchangeRatesUseCase.Response>() {
+    FlowUseCase<GetExchangeRatesUseCase.Request, GetExchangeRatesUseCase.Response>(ioDispatcher) {
     override fun execute(parameter: Request): Flow<Response> {
         Timber.d("GetExchangeRatesUseCase parameter: $parameter")
 

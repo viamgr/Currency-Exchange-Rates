@@ -72,7 +72,7 @@ internal class CurrencyExchangeRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun exchangeCurrency(
+    override suspend fun exchangeCurrency(
         amount: BigDecimal,
         currencyId: String,
         baseCurrencyId: String,

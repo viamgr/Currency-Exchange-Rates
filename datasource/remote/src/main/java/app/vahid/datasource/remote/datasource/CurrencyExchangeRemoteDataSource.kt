@@ -13,7 +13,7 @@ internal class CurrencyExchangeRemoteDataSourceImpl @Inject constructor(
     private val currencyExchangeApi: CurrencyExchangeApi,
 ) :
     CurrencyExchangeRemoteDataSource {
-    override fun exchangeCurrency(
+    override suspend fun exchangeCurrency(
         amount: BigDecimal,
         currencyId: String,
         baseCurrencyId: String,
@@ -21,7 +21,7 @@ internal class CurrencyExchangeRemoteDataSourceImpl @Inject constructor(
         return WrappedResult.success(Unit)
     }
 
-    override fun getCurrencyRateList(): WrappedResult<CurrencyRateListEntity> {
+    override suspend fun getCurrencyRateList(): WrappedResult<CurrencyRateListEntity> {
         return currencyExchangeApi.getRates()
             .map { response ->
                 CurrencyRateListEntity(

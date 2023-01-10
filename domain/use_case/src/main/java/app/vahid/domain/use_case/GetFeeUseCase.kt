@@ -1,6 +1,8 @@
 package app.vahid.domain.use_case
 
+import app.vahid.common.core.IoDispatcher
 import app.vahid.common.usecase_common.FlowUseCase
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
@@ -11,7 +13,8 @@ private const val FEE_AMOUNT = 0.007
 
 class GetFeeUseCase @Inject constructor(
     private val getTransactionCountUseCase: GetTransactionCountUseCase,
-) : FlowUseCase<Unit, Double>() {
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+) : FlowUseCase<Unit, Double>(ioDispatcher) {
     override fun execute(parameter: Unit): Flow<Double> {
         Timber.d("getTransactionCount 000")
         return getTransactionCountUseCase(Unit).map {

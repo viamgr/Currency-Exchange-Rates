@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -156,53 +157,56 @@ fun ExchangerScreen(
     onDestinationCurrencyChanged: (String) -> Unit,
     onOriginCurrencyChanged: (String) -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier
-    ) {
+    Column(Modifier
+        .fillMaxSize()
+        .background(Theme.colorScheme.primaryBg)) {
 
-        item {
-            ToolbarUi()
-        }
+        ToolbarUi()
 
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
 
-        errorType?.let {
-            item {
-                ErrorScreen(it)
+            errorType?.let {
+                item {
+                    ErrorScreen(it)
+                }
             }
+
+
+            item {
+                HeaderLabel(stringResource(R.string.my_balances).uppercase(Locale.getDefault()))
+            }
+
+            item {
+                BalancesListUi(balanceList, onClick = onOriginCurrencyChanged)
+            }
+
+            item {
+                HeaderLabel(stringResource(R.string.currency_exchange).uppercase(Locale.getDefault()))
+            }
+
+            item {
+
+                ExchangerActionsUi(
+                    originRateList = originRateList,
+                    destinationRateList = destinationRateList,
+                    selectedDestinationCurrency = selectedDestinationCurrency,
+                    selectedOriginCurrency = selectedOriginCurrency,
+                    originAmount = originAmount,
+                    destinationAmount = destinationAmount,
+                    onOriginAmountChanged = onOriginAmountChanged,
+                    onOriginCurrencyChanged = onOriginCurrencyChanged,
+                    onDestinationCurrencyChanged = onDestinationCurrencyChanged
+                )
+            }
+
+            item {
+                SubmitButton(isSubmitButtonEnabled && !isLoading, onSubmitClicked)
+            }
+
         }
-
-
-        item {
-            HeaderLabel(stringResource(R.string.my_balances).uppercase(Locale.getDefault()))
-        }
-
-        item {
-            BalancesListUi(balanceList, onClick = onOriginCurrencyChanged)
-        }
-
-        item {
-            HeaderLabel(stringResource(R.string.currency_exchange).uppercase(Locale.getDefault()))
-        }
-
-        item {
-
-            ExchangerActionsUi(
-                originRateList = originRateList,
-                destinationRateList = destinationRateList,
-                selectedDestinationCurrency = selectedDestinationCurrency,
-                selectedOriginCurrency = selectedOriginCurrency,
-                originAmount = originAmount,
-                destinationAmount = destinationAmount,
-                onOriginAmountChanged = onOriginAmountChanged,
-                onOriginCurrencyChanged = onOriginCurrencyChanged,
-                onDestinationCurrencyChanged = onDestinationCurrencyChanged
-            )
-        }
-
-        item {
-            SubmitButton(isSubmitButtonEnabled && !isLoading, onSubmitClicked)
-        }
-
     }
 }
 
@@ -376,7 +380,7 @@ fun BalancesListUi(balanceList: List<Balance>, onClick: (String) -> Unit) {
                 .clickable {
                     onClick(it.currencyId)
                 }
-                .padding(horizontal = Theme.dimensions.spaceSuperExtraLarge,
+                .padding(horizontal = Theme.dimensions.spaceExtraLarge,
                     vertical = Theme.dimensions.spaceMedium)) {
 
                 Text(text = it.amount.formatPrice(), style = Theme.typography.bodyLarge)

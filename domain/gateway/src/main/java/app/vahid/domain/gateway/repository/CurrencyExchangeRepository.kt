@@ -17,7 +17,7 @@ interface CurrencyExchangeRepository {
 
     fun getBalanceList(): Flow<List<Balance>>
 
-    fun exchangeCurrency(
+    suspend fun exchangeCurrency(
         amount: BigDecimal,
         currencyId: String,
         baseCurrencyId: String,

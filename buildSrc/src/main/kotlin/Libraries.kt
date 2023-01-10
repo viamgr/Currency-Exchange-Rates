@@ -36,8 +36,6 @@ object Libraries {
             "androidx.constraintlayout:constraintlayout-compose:$constraintLayoutVersion"
         const val lifecycleRuntime =
             "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
-        const val composePaging =
-            "androidx.paging:paging-compose:$pagingComposeVersion"
         const val composeNavigation =
             "androidx.navigation:navigation-compose:$navVersion"
         const val composeUiTestJunit4 =

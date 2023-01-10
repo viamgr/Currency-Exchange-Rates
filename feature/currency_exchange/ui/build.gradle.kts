@@ -44,7 +44,6 @@ dependencies {
         Libraries.Common.hiltAndroid,
         Libraries.Ui.hiltHilt,
         Libraries.Ui.composeUi,
-        Libraries.Ui.composePaging,
         Libraries.Ui.lifecycleRuntime,
         Libraries.Ui.composeUiTestManifest)
 

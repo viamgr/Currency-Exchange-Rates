@@ -48,8 +48,8 @@ fun ExchangerScreen(
                     it.originCurrency,
                     it.destinationAmount.toString(),
                     it.destinationCurrency,
-                    it.originCurrency,
                     it.fee.toString(),
+                    it.originCurrency,
                 )
             )
         }

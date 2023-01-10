@@ -12,10 +12,10 @@
 }
 
 -keep,includedescriptorclasses class com.ebayk.**$$serializer { *; }
--keepclassmembers class com.ebayk.** {
+-keepclassmembers class app.vahid.** {
     *** Companion;
 }
--keepclasseswithmembers class com.ebayk.** {
+-keepclasseswithmembers class app.vahid.** {
     #noinspection ShrinkerUnresolvedReference
     kotlinx.serialization.KSerializer serializer(...);
 }

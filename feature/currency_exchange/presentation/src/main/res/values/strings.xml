@@ -2,4 +2,8 @@
 <resources>
     <string name="screen_title_rate_list">Rate List</string>
     <string name="message_currency_exchange_success">You have converted %s %s to %s %s. Commission Fee - %s %s</string>
+    <string name="currency_converter">Currency converter</string>
+    <string name="my_balances">My Balances</string>
+    <string name="currency_exchange">Currency Exchange</string>
+    <string name="submit">Submit</string>
 </resources>

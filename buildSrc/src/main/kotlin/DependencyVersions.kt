@@ -12,6 +12,7 @@ const val material3Version = "1.0.0-beta01"
 const val materialVersion = "1.3.1"
 const val constraintLayoutVersion = "1.0.1"
 const val pagingComposeVersion = "1.0.0-alpha16"
+const val systemUiControllerVersion = "0.28.0"
 
 
 //cache

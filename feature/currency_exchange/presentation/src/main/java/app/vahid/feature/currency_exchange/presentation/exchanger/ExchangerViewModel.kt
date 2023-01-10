@@ -57,9 +57,9 @@ class ExchangerViewModel @Inject constructor(
             container.stateFlow.collect {
                 getCurrencyRatioUseCase(
                     GetCurrencyRatioUseCase.Request(
-                        originCurrency = container.stateFlow.value.selectedOriginCurrency,
-                        destinationCurrency = container.stateFlow.value.selectedDestinationCurrency,
-                        originAmount = container.stateFlow.value.originAmount)
+                        originCurrency = it.selectedOriginCurrency,
+                        destinationCurrency = it.selectedDestinationCurrency,
+                        originAmount = it.originAmount)
                 )
             }
         }
@@ -216,10 +216,12 @@ class ExchangerViewModel @Inject constructor(
         return getCurrencyRateListUseCase(Unit)
             .filter { it.isNotEmpty() }
             .flatMapConcat { rates ->
-                listOf(
-                    ExchangerEffect.OnUpdateDestinationRateList(rates.map { it.currencyId }),
-                    ExchangerEffect.OnUpdateDestinationCurrency(rates.first().currencyId),
-                )
+                mutableListOf<ExchangerEvent>().apply {
+                    add(ExchangerEffect.OnUpdateDestinationRateList(rates.map { it.currencyId }))
+                    if (container.stateFlow.value.selectedDestinationCurrency.isEmpty()) {
+                        add(ExchangerEffect.OnUpdateDestinationCurrency(rates.first().currencyId))
+                    }
+                }
                     .asFlow()
             }
     }

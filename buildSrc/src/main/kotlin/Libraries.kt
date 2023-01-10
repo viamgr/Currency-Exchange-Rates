@@ -50,6 +50,8 @@ object Libraries {
         const val mockkAndroid = "io.mockk:mockk-android:$mockkVersion"
         const val hiltHilt =
             "androidx.hilt:hilt-navigation-compose:$hiltComposeNavigationVersion"
+        const val systemUiController =
+            "com.google.accompanist:accompanist-systemuicontroller:$systemUiControllerVersion"
     }
 
     object Presentation {

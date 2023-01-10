@@ -5,5 +5,7 @@
     <string name="remote_error_item_not_found">Not found!</string>
     <string name="remote_error_no_internet_description">Unable to connect to internet. \n\nPlease check your connection and try again.</string>
     <string name="remote_error_server_description">Unable to connect to the system, please try again. If this issue persist contact us.</string>
+    <string name="receive">Receive</string>
+    <string name="sell">Sell</string>
 
 </resources>

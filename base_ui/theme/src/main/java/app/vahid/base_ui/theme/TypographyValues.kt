@@ -7,6 +7,7 @@ import androidx.compose.ui.text.TextStyle
 data class TypographyValues(
     val labelSmall: TextStyle,
     val labelMedium: TextStyle,
+    val secondaryText: TextStyle,
     val bodySmall: TextStyle,
     val bodyMediumReceive: TextStyle,
     val bodyMedium: TextStyle,

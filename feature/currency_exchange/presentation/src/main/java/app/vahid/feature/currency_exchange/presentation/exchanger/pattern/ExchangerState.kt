@@ -11,10 +11,10 @@ data class ExchangerState(
     val balanceList: List<Balance> = emptyList(),
     val destinationRateList: List<String> = emptyList(),
     val originRateList: List<String> = emptyList(),
-    val originAmount: BigDecimal = BigDecimal.ZERO,
     val isSubmitButtonEnabled: Boolean = true,
     val selectedOriginCurrency: String = "",
     val selectedDestinationCurrency: String = "",
     val fee: Double = 0.0,
+    val originAmount: BigDecimal = BigDecimal.ZERO,
     val destinationAmount: BigDecimal = BigDecimal.ZERO,
 ) : State

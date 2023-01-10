@@ -3,30 +3,55 @@
 package app.vahid.feature.currency_exchange.ui.components.template
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Divider
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.vahid.base_ui.common.components.organism.DropDownItem
 import app.vahid.base_ui.common.components.organism.ErrorScreen
+import app.vahid.base_ui.common.utils.formatPrice
 import app.vahid.base_ui.theme.Theme
 import app.vahid.common.presentation.dispatchIntent
 import app.vahid.common.presentation.error_handling.UiErrorType
@@ -38,6 +63,7 @@ import app.vahid.feature.currency_exchange.ui.R
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
+import java.util.Locale
 
 
 @Composable
@@ -131,11 +157,13 @@ fun ExchangerScreen(
     onOriginCurrencyChanged: (String) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier.padding(
-            horizontal = Theme.dimensions.spaceLarge,
-            vertical = Theme.dimensions.spaceLarge
-        )
+        modifier = Modifier
     ) {
+
+        item {
+            ToolbarUi()
+        }
+
 
         errorType?.let {
             item {
@@ -143,20 +171,17 @@ fun ExchangerScreen(
             }
         }
 
+
         item {
-            ToolbarUi()
+            HeaderLabel(stringResource(R.string.my_balances).uppercase(Locale.getDefault()))
         }
 
         item {
-            Text("My Balances")
+            BalancesListUi(balanceList, onClick = onOriginCurrencyChanged)
         }
 
         item {
-            BalancesListUi(balanceList)
-        }
-
-        item {
-            Text("Currency Exchange")
+            HeaderLabel(stringResource(R.string.currency_exchange).uppercase(Locale.getDefault()))
         }
 
         item {
@@ -182,12 +207,34 @@ fun ExchangerScreen(
 }
 
 @Composable
+private fun HeaderLabel(label: String) {
+    Text(
+        text = label,
+        style = Theme.typography.labelMedium,
+        modifier = Modifier.padding(
+            vertical = Theme.dimensions.spaceExtraLarge,
+            horizontal = Theme.dimensions.spaceLarge
+        )
+    )
+}
+
+@Composable
 fun SubmitButton(isSubmitButtonEnabled: Boolean, onSubmitClicked: () -> Unit) {
 
     Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(Theme.dimensions.spaceExtraLarge),
         onClick = onSubmitClicked,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Theme.colorScheme.buttonBg,
+            contentColor = Theme.colorScheme.labelMedium,
+        ),
         enabled = isSubmitButtonEnabled) {
-        Text(text = "Submit")
+        Text(
+            text = stringResource(R.string.submit).uppercase(Locale.getDefault()),
+            style = Theme.typography.button
+        )
     }
 }
 
@@ -197,8 +244,8 @@ fun ExchangerActionsUi(
     destinationRateList: List<String>,
     selectedDestinationCurrency: String,
     selectedOriginCurrency: String,
-    originAmount: BigDecimal,
-    destinationAmount: BigDecimal,
+    originAmount: BigDecimal = BigDecimal.ZERO,
+    destinationAmount: BigDecimal = BigDecimal.ZERO,
     onOriginAmountChanged: (value: String) -> Unit,
     onOriginCurrencyChanged: (String) -> Unit,
     onDestinationCurrencyChanged: (String) -> Unit,
@@ -206,81 +253,137 @@ fun ExchangerActionsUi(
     Column {
 
         ExchangerActionRow(
-            amount = originAmount,
+            amount = originAmount.toString(),
             currency = selectedOriginCurrency,
-            itemList = originRateList, onOriginAmountChanged = onOriginAmountChanged,
+            itemList = originRateList,
+            label = stringResource(R.string.sell),
+            iconTint = Theme.colorScheme.receive,
             onCurrencyChanged = onOriginCurrencyChanged,
-            label = "Sell")
+            iconRotation = 90F,
+            onOriginAmountChanged = onOriginAmountChanged,
+            readOnly = false,
+            exchangeTypeTextColor = Theme.colorScheme.primary,
+        )
 
         ExchangerActionRow(
-            amount = destinationAmount,
+            amount = "+ ${destinationAmount.formatPrice()}",
             currency = selectedDestinationCurrency,
             itemList = destinationRateList,
+            label = stringResource(R.string.receive),
+            iconTint = Theme.colorScheme.sell,
             onCurrencyChanged = onDestinationCurrencyChanged,
-            label = "Receive"
+            iconRotation = 270F,
+            readOnly = true,
+            exchangeTypeTextColor = Theme.colorScheme.receive
         )
     }
 }
 
 @Composable
 private fun ExchangerActionRow(
-    amount: BigDecimal,
+    amount: String,
     currency: String,
     itemList: List<String>,
     label: String,
-    onOriginAmountChanged: (value: String) -> Unit = {},
+    iconTint: Color,
     onCurrencyChanged: (String) -> Unit,
+    iconRotation: Float,
+    onOriginAmountChanged: (value: String) -> Unit = {},
+    readOnly: Boolean,
+    exchangeTypeTextColor: Color,
 ) {
-    Row {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = CenterVertically
+    ) {
         Image(
-            modifier = Modifier.rotate(90F),
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier
+                .align(CenterVertically)
+                .height(Theme.dimensions.heightMedium)
+                .padding(start = Theme.dimensions.spaceExtraLarge)
+                .rotate(iconRotation),
             painter = painterResource(id = R.drawable.ic_baseline_arrow_circle_left_24),
-            contentDescription = "Up"
-        )
-        Text(text = label)
-
-        EditText(
-            value = amount.toString(),
-            readOnly = false,
-            onValueChange = onOriginAmountChanged,
-            modifier = Modifier.fillMaxWidth(0.4F)
+            colorFilter = ColorFilter.tint(iconTint),
+            contentDescription = label
         )
 
-        Text(text = currency)
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .weight(1F)
+                .padding(start = Theme.dimensions.spaceMedium)
+                .wrapContentHeight()) {
 
-        DropDownItem(
-            items = itemList,
-            onItemSelected = {
-                onCurrencyChanged(itemList[it])
-            },
-            title = {
-                Text(text = it)
-            }
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = CenterVertically,
+                modifier = Modifier.padding(end = Theme.dimensions.spaceMedium)
+            ) {
                 Text(
-                    text = currency,
-                    style = Theme.typography.bodyMedium,
+                    text = label,
+                    modifier = Modifier.padding(Theme.dimensions.spaceMedium),
+                    style = Theme.typography.bodySmall
+                )
+
+                EditText(
+                    value = amount,
+                    readOnly = readOnly,
+                    modifier = Modifier.weight(1F),
+                    onValueChange = onOriginAmountChanged,
+                    textColor = exchangeTypeTextColor
+                )
+
+                Text(text = currency, style = Theme.typography.bodySmall)
+
+                DropDownItem(
+                    items = itemList,
+                    onItemSelected = {
+                        onCurrencyChanged(itemList[it])
+                    },
+                    itemsContent = {
+                        Text(
+                            text = it,
+                            style = Theme.typography.bodySmall,
+                        )
+                    },
+                    key = { _, item ->
+                        item
+                    }
+                )
+
+                Image(
                     modifier = Modifier
-                        .padding(start = Theme.dimensions.spaceLarge),
+                        .rotate(90F)
+                        .padding(Theme.dimensions.spaceMedium)
+                        .size(Theme.dimensions.dropDownArrowSize),
+                    painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_ios_24),
+                    contentDescription = label
                 )
             }
+
+            Divider()
         }
-        Image(
-            modifier = Modifier.rotate(180F),
-            painter = painterResource(id = R.drawable.ic_baseline_arrow_drop_down_24),
-            contentDescription = "Down"
-        )
+
     }
 }
 
 @Composable
-fun BalancesListUi(balanceList: List<Balance>) {
-    LazyRow {
+fun BalancesListUi(balanceList: List<Balance>, onClick: (String) -> Unit) {
+    LazyRow(Modifier.padding(
+        horizontal = Theme.dimensions.spaceLarge
+    )) {
         items(items = balanceList, key = { it.currencyId }) {
-            Row {
-                Text(text = it.currencyId)
-                Text(text = it.amount.toString())
+            Row(modifier = Modifier
+                .clickable {
+                    onClick(it.currencyId)
+                }
+                .padding(horizontal = Theme.dimensions.spaceSuperExtraLarge,
+                    vertical = Theme.dimensions.spaceMedium)) {
+
+                Text(text = it.amount.formatPrice(), style = Theme.typography.bodyLarge)
+
+                Text(text = it.currencyId, style = Theme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = Theme.dimensions.spaceMedium))
+
             }
         }
     }
@@ -292,24 +395,72 @@ private fun EditText(
     readOnly: Boolean = false,
     modifier: Modifier = Modifier,
     onValueChange: (value: String) -> Unit = {},
+    textColor: Color,
 ) {
+    val focusRequester = remember { FocusRequester() }
 
-    var text by remember(key1 = value) { mutableStateOf(value) }
+    var text by remember(key1 = value) {
+        mutableStateOf(TextFieldValue(
+            text = value,
+            selection = if (value == "0") {
+                TextRange(start = 0, end = 1)
+            } else {
+                TextRange(start = value.length, end = value.length)
+            }
+        ))
+    }
 
-    TextField(
-        modifier = modifier,
+    OutlinedTextField(
+        maxLines = 2,
+        modifier = modifier
+            .focusRequester(focusRequester)
+            .onFocusChanged { },
         value = text,
+        textStyle = Theme.typography.bodySmall.copy(
+            textAlign = TextAlign.End,
+            color = textColor
+        ),
         readOnly = readOnly,
         onValueChange = {
-            text = it
-            onValueChange(it)
+            if (it.text.length < 12) {
+                text = it
+                onValueChange(it.text)
+            }
         },
-    )
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            cursorColor = Theme.colorScheme.secondary,
+            errorCursorColor = Theme.colorScheme.secondary,
+            focusedBorderColor = Theme.colorScheme.primaryBg,
+            disabledBorderColor = Theme.colorScheme.primaryBg,
+            unfocusedBorderColor = Theme.colorScheme.primaryBg,
+            errorBorderColor = Theme.colorScheme.primaryBg,
+        ),
+
+        )
+    LaunchedEffect(Unit) {
+        if (!readOnly)
+            focusRequester.requestFocus()
+    }
 
 }
 
 @Composable
 fun ToolbarUi() {
 
-    Text(text = "toolbar")
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentSize()
+        .background(Theme.colorScheme.toolbarBg)
+    ) {
+
+        Text(
+            text = stringResource(R.string.currency_converter),
+            style = Theme.typography.labelSmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Theme.dimensions.spaceLarge), textAlign = TextAlign.Center)
+
+    }
+
 }

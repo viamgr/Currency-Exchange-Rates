@@ -13,14 +13,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun AppMaterialTheme(
     content: @Composable () -> Unit,
 ) {
-    CompositionLocalProvider(LocalTypography provides typographyValues,
+    val systemUiController = rememberSystemUiController()
+
+    systemUiController.setSystemBarsColor(
+        color = Theme.colorScheme.toolbarBg
+    )
+
+    CompositionLocalProvider(
+        LocalTypography provides typographyValues,
         LocalColorValues provides colorValues,
-        LocalDimens provides dimensionValues) {
+        LocalDimens provides dimensionValues
+    ) {
         MaterialTheme(content = {
             AppScaffold(
                 content = content)
@@ -60,12 +69,13 @@ val typographyValues: TypographyValues
         return TypographyValues(
             labelSmall = bodySmall.copy(color = Theme.colorScheme.toolbarText),
             labelMedium = bodySmall.copy(color = Theme.colorScheme.labelMedium),
+            secondaryText = bodySmall.copy(color = Theme.colorScheme.primaryBg),
             bodySmall = bodySmall.copy(color = Theme.colorScheme.primary),
             bodyMedium = bodyMedium.copy(color = Theme.colorScheme.primary),
             bodyMediumReceive = bodyMedium.copy(color = Theme.colorScheme.receive),
             bodyLarge = bodyLarge.copy(color = Theme.colorScheme.primary),
             button = bodyLarge.copy(
-                color = Theme.colorScheme.secondary
+                color = Theme.colorScheme.primaryBg
             )
 
         )

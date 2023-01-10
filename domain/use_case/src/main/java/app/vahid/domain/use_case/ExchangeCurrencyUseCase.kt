@@ -8,7 +8,6 @@ import app.vahid.domain.gateway.model.Transaction
 import app.vahid.domain.gateway.repository.CurrencyExchangeRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
-import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -20,7 +19,6 @@ class ExchangeCurrencyUseCase @Inject constructor(
     @IoDispatcher ioDispatcher: CoroutineDispatcher,
 ) : SuspendUseCase<ExchangeCurrencyUseCase.Request, WrappedResult<Unit>>(ioDispatcher) {
     override suspend fun execute(parameter: Request): WrappedResult<Unit> {
-        Timber.d("getTransactionCount 111111")
 
         val currencyRatioUseCase = getCurrencyRatioUseCase
         currencyRatioUseCase(

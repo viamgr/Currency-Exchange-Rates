@@ -23,6 +23,7 @@ dependencies {
         Libraries.Ui.composeNavigation,
         Libraries.Ui.composeMaterial,
         Libraries.Ui.composeMaterial3,
+        Libraries.Ui.systemUiController,
         Libraries.Ui.composeConstraintlayout,
     )
 }

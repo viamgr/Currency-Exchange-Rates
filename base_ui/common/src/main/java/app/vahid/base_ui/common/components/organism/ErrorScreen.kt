@@ -28,11 +28,12 @@ fun ErrorScreen(
     if (uiErrorType is IntResError) {
         Card(
             modifier = Modifier
+                .padding(Theme.dimensions.spaceLarge)
                 .clickable { onRetryClicked() }
-                .fillMaxWidth(),
-
+                .fillMaxWidth()
+                .testTag("ErrorScreen"),
             colors = CardDefaults.cardColors(
-                containerColor = Theme.colorScheme.secondary,
+                containerColor = Theme.colorScheme.sell,
             )
 
         ) {
@@ -48,10 +49,9 @@ fun ErrorScreen(
 
                 Text(
                     text = stringResource(id = uiErrorType.title),
-                    style = Theme.typography.bodyMedium,
+                    style = Theme.typography.secondaryText,
                     modifier = Modifier
                         .clickable { onRetryClicked() }
-                        .testTag("ErrorScreen"),
                 )
                 Spacer(modifier = Modifier.padding(Theme.dimensions.spaceLarge))
 
@@ -59,10 +59,9 @@ fun ErrorScreen(
 
             Text(
                 text = stringResource(id = uiErrorType.message),
-                style = Theme.typography.bodyMedium,
+                style = Theme.typography.secondaryText,
                 modifier = Modifier
                     .padding(Theme.dimensions.spaceLarge)
-                    .testTag("ErrorScreen"),
             )
         }
 

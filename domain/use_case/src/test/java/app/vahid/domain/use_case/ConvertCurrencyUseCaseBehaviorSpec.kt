@@ -1,5 +1,6 @@
 package app.vahid.domain.use_case
 
+import app.cash.turbine.test
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -7,8 +8,9 @@ import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import java.math.BigDecimal
 
 class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
     override fun isolationMode(): IsolationMode = IsolationMode.InstancePerTest
@@ -21,18 +23,19 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
     private val baseCurrencyRate = 2.0
     private val originCurrencyId = "EUR"
     private val destinationCurrencyId = "USD"
-    private val inputAmount = 10.0
+    private val inputAmount = 10.0.toBigDecimal()
 
     init {
 
         Given("A GetCurrencyRatioUseCase instance") {
 
-            val originCurrencyToBaseCurrencyExchangedAmount = mockk<Double>(relaxed = true)
-            val baseCurrencyToDestinationCurrencyExchangedAmount = mockk<Double>(relaxed = true)
+            val originCurrencyToBaseCurrencyExchangedAmount = mockk<BigDecimal>(relaxed = true)
+            val baseCurrencyToDestinationCurrencyExchangedAmount = mockk<BigDecimal>(relaxed = true)
 
             val convertCurrencyUseCase = GetCurrencyRatioUseCase(
                 exchangeCalculatorUseCase = exchangeCalculatorUseCase,
-                getTransactionRatesUseCase = getTransactionRatesUseCase
+                getExchangeRatesUseCase = getTransactionRatesUseCase,
+                ioDispatcher = UnconfinedTestDispatcher(),
             )
 
             val getTransactionRatesUseCaseRequest = getTransactionRatesUseCaseFakeResponse()
@@ -60,26 +63,31 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
 
             And("convert currency $actualRequest") {
 
-                val actualResponse = convertCurrencyUseCase(actualRequest).first()
+                convertCurrencyUseCase.flow.test {
+                    convertCurrencyUseCase(actualRequest)
 
-                Then("verify getTransactionRatesUseCase call $actualRequest") {
-                    verify(exactly = 1) {
-                        getTransactionRatesUseCase.invoke(getTransactionRatesUseCaseRequest)
+                    val actualResponse = awaitItem()
+
+                    Then("verify getTransactionRatesUseCase call $actualRequest") {
+                        verify(exactly = 1) {
+                            getTransactionRatesUseCase.invoke(getTransactionRatesUseCaseRequest)
+                        }
+                    }
+
+                    Then("verify exchangeCalculatorUseCase sequence call $actualRequest") {
+                        coVerifySequence {
+                            exchangeCalculatorUseCase.invoke(
+                                exchangeCalculatorUseCaseRequestOriginCurrencyToBaseCurrency)
+                            exchangeCalculatorUseCase.invoke(
+                                exchangeCalculatorUseCaseRequestBaseCurrencyToDestinationCurrency)
+                        }
+                    }
+
+                    Then("exchanged value should be as intended $actualRequest") {
+                        actualResponse shouldBe baseCurrencyToDestinationCurrencyExchangedAmount
                     }
                 }
 
-                Then("verify exchangeCalculatorUseCase sequence call $actualRequest") {
-                    coVerifySequence {
-                        exchangeCalculatorUseCase.invoke(
-                            exchangeCalculatorUseCaseRequestOriginCurrencyToBaseCurrency)
-                        exchangeCalculatorUseCase.invoke(
-                            exchangeCalculatorUseCaseRequestBaseCurrencyToDestinationCurrency)
-                    }
-                }
-
-                Then("exchanged value should be as intended $actualRequest") {
-                    actualResponse shouldBe baseCurrencyToDestinationCurrencyExchangedAmount
-                }
 
             }
         }
@@ -107,7 +115,7 @@ class ConvertCurrencyUseCaseBehaviorSpec : BehaviorSpec() {
         originCurrencyRate: Double,
         destinationCurrencyRate: Double,
         amount: BigDecimal,
-        exchangedamount: BigDecimal,
+        exchangedAmount: BigDecimal,
     ): ExchangeCalculatorUseCase.Request {
         return ExchangeCalculatorUseCase.Request(
             originCurrencyRate = originCurrencyRate,

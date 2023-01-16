@@ -1,4 +1,3 @@
-import app.vahid.gradle.base.getLocalProperty
 import app.vahid.gradle.base.implementation
 import app.vahid.gradle.base.kapt
 import app.vahid.gradle.base.testImplementation
@@ -14,10 +13,16 @@ plugins {
 android {
     defaultConfig {
         buildConfigField("String",
-            ConfigData.baseUrlKey,
-            "\"${getLocalProperty(ConfigData.baseUrlKey) as String}\"")
+            ConfigData.encryptedBaseUrlKey,
+            "\"${ConfigData.encryptedBaseUrl}\"")
     }
 
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.18.1"
+        }
+    }
 }
 
 dependencies {

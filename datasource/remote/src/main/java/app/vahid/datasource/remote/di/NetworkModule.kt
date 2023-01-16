@@ -1,8 +1,8 @@
 package app.vahid.datasource.remote.di
 
-import app.vahid.datasource.remote.BuildConfig.BASE_URL
 import app.vahid.datasource.remote.api.CurrencyExchangeApi
 import app.vahid.datasource.remote.base.ResultCallAdapterFactory
+import app.vahid.datasource.remote.base.SecureKey
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -57,7 +57,7 @@ object NetworkModule {
         converterFactory: Converter.Factory,
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(SecureKey.getUrl())
             .client(client)
             .addCallAdapterFactory(resultCallAdapterFactory)
             .addConverterFactory(converterFactory)

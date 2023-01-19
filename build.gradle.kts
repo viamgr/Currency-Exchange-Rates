@@ -1,6 +1,4 @@
-import androidx.navigation.safe.args.generator.ext.joinToCamelCase
 import app.vahid.gradle.base.configureAndroid
-import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 project.subprojects {
@@ -51,26 +49,3 @@ allprojects {
 
     }
 }
-
-val template = """/**
- * Auto generated module configurations.
- */
-import app.vahid.gradle.base.Module
-
-sealed class Modules(override val path: String) : Module(path = path) {
-    {{MODULE_LIST}}
-}
- """
-
-val modulesFile = file("$rootDir/buildSrc/build/generated/src/Modules.kt").also {
-    it.ensureParentDirsCreated()
-}
-
-val modules = project.subprojects.joinToString("\n    ") {
-    val variableName = it.path.split(":").joinToCamelCase()
-    "object $variableName : Module(\"${it.path}\")"
-}
-
-modulesFile.ensureParentDirsCreated()
-modulesFile.writeText(template.replace("{{MODULE_LIST}}", modules))
-

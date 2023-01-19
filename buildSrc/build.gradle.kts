@@ -37,7 +37,3 @@ dependencies {
     implementation(GradleClassPath.kotlinSerialization)
     implementation(GradleClassPath.safeArg)
 }
-
-project.sourceSets.getByName("main").java.apply {
-    srcDir("/build/generated/src")
-}
